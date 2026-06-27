@@ -1,0 +1,23 @@
+"What is the benefit of 'using' statement in C#?": {
+    "answer": `
+    <p>
+        The <code>using</code> statement ensures that an object is
+        <strong>automatically disposed</strong> after it is used, even if an exception occurs.
+        It helps prevent resource leaks by releasing unmanaged resources such as files,
+        database connections, streams, and network objects.
+    </p>
+
+    <ul>
+        <li>Automatically calls the <code>Dispose()</code> method.</li>
+        <li>Prevents memory and resource leaks.</li>
+        <li>Makes code cleaner and easier to maintain.</li>
+        <li>Works with classes that implement the <code>IDisposable</code> interface.</li>
+    </ul>
+
+    <div class="tip">
+        <strong>🎯 Interview Tip:</strong><br>
+        <code>using</code> is syntactic sugar for a <code>try-finally</code> block where
+        <code>Dispose()</code> is called in the <code>finally</code> block.
+    </div>
+    `
+},

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Interview Data</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    .ck-editor__editable_inline {
+      min-height: 220px;
+      max-height: 320px;
+      overflow: auto;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f4;
+      color: #111827;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    h1 { margin-top: 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      margin-bottom: 14px;
+      font-size: 14px;
+    }
+    textarea { min-height: 180px; resize: vertical; }
+    button {
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+    button:hover { background: #1d4ed8; }
+    .actions { display: flex; gap: 10px; }
+    .actions button { flex: 1; }
+    .preview {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 16px;
+      background: #fafafa;
+      min-height: 180px;
+      overflow: auto;
+    }
+    .note {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: -8px;
+      margin-bottom: 12px;
+    }
+    .small-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: -8px;
+      margin-bottom: 10px;
+    }
+    .helper-box {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+    .output { margin-top: 20px; }
+    .output textarea { min-height: 280px; background: #111827; color: #f9fafb; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Interview Data Manager</h1>
+    <div class="grid">
+      <div>
+        <label for="topicSelect">Select Topic</label>
+        <select id="topicSelect"></select>
+
+        <label for="newTopic">Or add a new topic</label>
+        <input id="newTopic" placeholder="Example: javascript" />
+
+        <label for="questionInput">Question</label>
+        <input id="questionInput" placeholder="Enter question" />
+
+        <label for="answerInput">Answer HTML</label>
+        <div id="answerEditor"></div>
+
+        <div class="actions">
+          <button id="generateBtn">Generate JS</button>
+          <button id="copyBtn" type="button">Copy HTML</button>
+        </div>
+      </div>
+
+      <div>
+        <label>Live Preview</label>
+        <div id="preview" class="preview"></div>
+      </div>
+    </div>
+
+    <div class="output">
+      <label for="outputCode">Generated JavaScript</label>
+      <textarea id="outputCode" readonly></textarea>
+    </div>
+  </div>
+
+  <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+  <script src="data.js"></script>
+  <script src="csharp-data.js"></script>
+  <script src="core-data.js"></script>
+  <script src="sql-data.js"></script>
+  <script src="angular-data.js"></script>
+  <script src="solid-data.js"></script>
+  <script src="microservices-data.js"></script>
+  <script src="azure-data.js"></script>
+  <script src="webapi-data.js"></script>
+  <script>
+    let currentData = {};
+
+    async function loadData() {
+      try {
+        if (window.data) {
+          currentData = window.data;
+          populateTopics();
+          return;
+        }
+
+        const response = await fetch('data.js');
+        const text = await response.text();
+        const getData = new Function(`${text}\nreturn data;`);
+        currentData = getData();
+        populateTopics();
+      } catch (error) {
+        console.error('Unable to load data.js', error);
+        currentData = {};
+        populateTopics();
+      }
+    }
+
+    function populateTopics() {
+      const select = document.getElementById('topicSelect');
+      select.innerHTML = '';
+
+      const rawData = window.data || currentData || {};
+      const topics = Object.keys(rawData).sort((a, b) => a.localeCompare(b));
+
+      topics.forEach(topic => {
+        const option = document.createElement('option');
+        option.value = topic;
+        option.textContent = topic;
+        select.appendChild(option);
+      });
+
+      if (topics.length === 0) {
+        const defaultOption = document.createElement('option');
+        defaultOption.value = 'csharp';
+        defaultOption.textContent = 'csharp';
+        select.appendChild(defaultOption);
+      }
+    }
+
+    function serializeValue(value, indent = '') {
+      if (typeof value === 'string') {
+        const normalized = String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const escaped = normalized
+          .replace(/\\/g, '\\\\')
+          .replace(/`/g, '\\`')
+          .replace(/\$\{/g, '\\${');
+        return '`' + escaped + '`';
+      }
+
+      if (typeof value === 'number' || typeof value === 'boolean' || value === null) {
+        return JSON.stringify(value);
+      }
+
+      if (Array.isArray(value)) {
+        if (value.length === 0) return '[]';
+        const body = value.map(item => indent + '  ' + serializeValue(item, indent + '  ')).join(',\n');
+        return '[\n' + body + '\n' + indent + ']';
+      }
+
+      if (typeof value === 'object') {
+        const entries = Object.entries(value);
+        if (entries.length === 0) return '{}';
+        const body = entries.map(([key, item]) => {
+          const serializedKey = JSON.stringify(key);
+          const serializedValue = serializeValue(item, indent + '  ');
+          return indent + '  ' + serializedKey + ': ' + serializedValue;
+        }).join(',\n');
+        return '{\n' + body + '\n' + indent + '}';
+      }
+
+      return JSON.stringify(String(value));
+    }
+
+    function buildGeneratedFile() {
+      const topicInput = document.getElementById('newTopic').value.trim();
+      const selectedTopic = document.getElementById('topicSelect').value;
+      const topic = (topicInput || selectedTopic || 'csharp').trim();
+      const question = document.getElementById('questionInput').value.trim();
+      const answerHtml = editor ? editor.getData().trim() : '';
+
+      if (!question || !answerHtml) {
+        alert('Please enter both a question and an answer.');
+        return null;
+      }
+
+      const safeTopic = topic.replace(/[^a-zA-Z0-9_]/g, '');
+      const topicData = JSON.parse(JSON.stringify(currentData[safeTopic] || {}));
+      topicData[question] = { answer: answerHtml };
+
+      const serializedEntry = serializeValue({ answer: answerHtml });
+      const generatedCode = `  ${JSON.stringify(question)}: ${serializedEntry}\n`;
+      const pasteableCode = `  ${JSON.stringify(question)}: ${serializedEntry}\n`;
+      return { generatedCode, pasteableCode, updatedData: { [safeTopic]: topicData }, topic: safeTopic, question, answerHtml };
+    }
+
+    let editor;
+
+    async function initEditor() {
+      editor = await ClassicEditor.create(document.querySelector('#answerEditor'));
+      editor.model.document.on('change:data', () => {
+        renderPreview();
+      });
+    }
+
+    function renderPreview() {
+      const html = editor ? editor.getData() : '';
+      document.getElementById('preview').innerHTML = html;
+    }
+
+    document.getElementById('generateBtn').addEventListener('click', () => {
+      const result = buildGeneratedFile();
+      if (!result) return;
+      document.getElementById('outputCode').value = result.generatedCode;
+      renderPreview();
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const result = buildGeneratedFile();
+      if (!result) {
+        alert('Generate code first.');
+        return;
+      }
+      await navigator.clipboard.writeText(result.pasteableCode);
+      alert('Paste-ready topic code copied to clipboard.');
+    });
+
+    initEditor();
+    loadData();
+  </script>
+</body>
+</html>
