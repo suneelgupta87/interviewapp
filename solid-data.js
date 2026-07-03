@@ -1,21 +1,251 @@
 window.data = window.data || {};
 window.data.solid = {
-  "What is SRP?": {
+  "What is SRP (Single Responsibility Principle)?": {
     "answer": `
-<h3>Answer</h3>
-<p>
-SRP stands for Single Responsibility Principle, which means a class should have only one reason to change.
-</p>
-`
-  },
-  "What is OCP?": {
+    <p>
+        <strong>SRP (Single Responsibility Principle)</strong> is the first
+        principle of <strong>SOLID</strong>. It states that a class should have
+        <strong>only one responsibility</strong> or <strong>one reason to change</strong>.
+    </p>
+
+    <p>
+        In other words, a class should focus on a single task. If a class handles
+        multiple responsibilities, it becomes difficult to maintain, test, and
+        extend.
+    </p>
+
+    <p><strong>Without SRP</strong></p>
+
+    <pre><code class="language-text">
+OrderService
+      │
+      ├── Validate Order
+      ├── Save Order
+      ├── Send Email
+      ├── Generate Invoice
+      └── Write Logs
+
+Too Many Responsibilities
+    </code></pre>
+
+    <p><strong>With SRP</strong></p>
+
+    <pre><code class="language-text">
+OrderService
+      │
+      ├── Validate Order
+      └── Save Order
+
+EmailService
+      │
+      └── Send Email
+
+InvoiceService
+      │
+      └── Generate Invoice
+
+LoggerService
+      │
+      └── Write Logs
+    </code></pre>
+
+    <p><strong>Without SRP Example</strong></p>
+
+    <pre><code class="language-csharp">
+public class OrderService
+{
+    public void PlaceOrder()
+    {
+        // Validate Order
+
+        // Save Order
+
+        // Send Email
+
+        // Generate Invoice
+    }
+}
+    </code></pre>
+
+    <p><strong>With SRP Example</strong></p>
+
+    <pre><code class="language-csharp">
+public class OrderService
+{
+    public void PlaceOrder()
+    {
+        // Save Order
+    }
+}
+
+public class EmailService
+{
+    public void SendEmail() { }
+}
+
+public class InvoiceService
+{
+    public void GenerateInvoice() { }
+}
+    </code></pre>
+
+    <p><strong>Benefits</strong></p>
+
+    <ul>
+        <li>Improves maintainability.</li>
+        <li>Reduces code complexity.</li>
+        <li>Makes unit testing easier.</li>
+        <li>Promotes code reusability.</li>
+        <li>Reduces the impact of changes.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an e-commerce application, the <strong>OrderService</strong> should
+        only manage order-related operations. Sending emails, generating invoices,
+        and logging should be handled by separate services.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        The Single Responsibility Principle states that a class should have only
+        one responsibility or one reason to change. Each class should focus on a
+        single functionality, making the application easier to maintain and test.
+    </div>
+    `
+},
+  "What is OCP (Open/Closed Principle)?": {
     "answer": `
-<h3>Answer</h3>
-<p>
-OCP stands for Open Closed Principle, which means software entities should be open for extension but closed for modification.
-</p>
-`
-  },
+    <p>
+        <strong>OCP (Open/Closed Principle)</strong> is the second principle of
+        <strong>SOLID</strong>. It states that software entities such as classes,
+        modules, and methods should be <strong>open for extension</strong> but
+        <strong>closed for modification</strong>.
+    </p>
+
+    <p>
+        This means we should be able to add new functionality without modifying
+        existing, tested code. We typically achieve this using
+        <strong>interfaces, abstract classes, and polymorphism</strong>.
+    </p>
+
+    <p><strong>Without OCP</strong></p>
+
+    <pre><code class="language-text">
+PaymentService
+      │
+      ├── Credit Card
+      ├── UPI
+      └── Net Banking
+
+New Payment Method?
+      │
+      ▼
+Modify Existing Class ❌
+    </code></pre>
+
+    <p><strong>With OCP</strong></p>
+
+    <pre><code class="language-text">
+            IPayment
+               ▲
+      ┌────────┼────────┐
+      │        │        │
+CreditCard   UPI   NetBanking
+      │        │        │
+      └────────┼────────┘
+               ▼
+        PaymentService
+
+New Payment?
+      │
+      ▼
+Create New Class ✔
+    </code></pre>
+
+    <p><strong>Without OCP Example</strong></p>
+
+    <pre><code class="language-csharp">
+public class PaymentService
+{
+    public void Pay(string paymentType)
+    {
+        if (paymentType == "Card")
+        {
+            // Card Payment
+        }
+        else if (paymentType == "UPI")
+        {
+            // UPI Payment
+        }
+    }
+}
+    </code></pre>
+
+    <p><strong>With OCP Example</strong></p>
+
+    <pre><code class="language-csharp">
+public interface IPayment
+{
+    void Pay();
+}
+
+public class CardPayment : IPayment
+{
+    public void Pay()
+    {
+        Console.WriteLine("Card Payment");
+    }
+}
+
+public class UpiPayment : IPayment
+{
+    public void Pay()
+    {
+        Console.WriteLine("UPI Payment");
+    }
+}
+
+public class PaymentService
+{
+    public void ProcessPayment(IPayment payment)
+    {
+        payment.Pay();
+    }
+}
+    </code></pre>
+
+    <p><strong>Benefits</strong></p>
+
+    <ul>
+        <li>Existing code remains unchanged.</li>
+        <li>Reduces the risk of introducing bugs.</li>
+        <li>Improves maintainability.</li>
+        <li>Supports scalability.</li>
+        <li>Promotes polymorphism and loose coupling.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an e-commerce application, when a new payment method such as
+        <strong>Wallet</strong> or <strong>PayPal</strong> is introduced,
+        we simply create a new class implementing
+        <strong>IPayment</strong>. The existing
+        <strong>PaymentService</strong> does not need to be modified.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        The Open/Closed Principle states that software should be open for
+        extension but closed for modification. New functionality should be
+        added by extending existing code rather than changing tested code.
+    </div>
+    `
+},
   "Liskov Substitution Principle (LSP)": {
     "answer": `
     <p>
@@ -103,22 +333,265 @@ payment.Pay(1000);
     </div>
     `
 },
-  "What is ISP?": {
+ "What is ISP (Interface Segregation Principle)?": {
     "answer": `
-<h3>Answer</h3>
-<p>
-ISP stands for Interface Segregation Principle, which recommends keeping interfaces focused and client-specific.
-</p>
-`
-  },
-  "What is DIP?": {
+    <p>
+        <strong>ISP (Interface Segregation Principle)</strong> is the fourth
+        principle of <strong>SOLID</strong>. It states that
+        <strong>clients should not be forced to depend on interfaces they do not use.</strong>
+    </p>
+
+    <p>
+        Instead of creating one large interface with many methods, we should
+        create multiple small and specific interfaces so that each class
+        implements only the methods it actually needs.
+    </p>
+
+    <p><strong>Without ISP</strong></p>
+
+    <pre><code class="language-text">
+        IWorker
+           │
+   ┌───────┴────────┐
+   │                │
+Developer       Robot
+   │                │
+Work()          Work()
+Eat()  ✔        Eat() ❌
+    </code></pre>
+
+    <p><strong>With ISP</strong></p>
+
+    <pre><code class="language-text">
+      IWork
+         ▲
+         │
+   Developer
+      Robot
+
+      IEat
+        ▲
+        │
+   Developer
+    </code></pre>
+
+    <p><strong>Without ISP Example</strong></p>
+
+    <pre><code class="language-csharp">
+public interface IWorker
+{
+    void Work();
+    void Eat();
+}
+
+public class Robot : IWorker
+{
+    public void Work()
+    {
+        Console.WriteLine("Robot Working");
+    }
+
+    public void Eat()
+    {
+        throw new NotImplementedException();
+    }
+}
+    </code></pre>
+
+    <p><strong>With ISP Example</strong></p>
+
+    <pre><code class="language-csharp">
+public interface IWork
+{
+    void Work();
+}
+
+public interface IEat
+{
+    void Eat();
+}
+
+public class Developer : IWork, IEat
+{
+    public void Work()
+    {
+        Console.WriteLine("Coding...");
+    }
+
+    public void Eat()
+    {
+        Console.WriteLine("Having Lunch");
+    }
+}
+
+public class Robot : IWork
+{
+    public void Work()
+    {
+        Console.WriteLine("Robot Working");
+    }
+}
+    </code></pre>
+
+    <p><strong>Benefits</strong></p>
+
+    <ul>
+        <li>Smaller and focused interfaces.</li>
+        <li>Reduces unnecessary implementation.</li>
+        <li>Improves maintainability.</li>
+        <li>Promotes loose coupling.</li>
+        <li>Makes code easier to extend and test.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an e-commerce application, instead of creating one
+        <strong>IUserService</strong> interface containing methods like
+        Register(), Login(), PlaceOrder(), CancelOrder(), GenerateReport(),
+        and ApproveRefund(), split them into smaller interfaces such as
+        <strong>IAuthentication</strong>,
+        <strong>IOrderService</strong>, and
+        <strong>IReportService</strong>.
+        Each class implements only the interfaces it requires.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        The Interface Segregation Principle states that a class should not be
+        forced to implement methods it does not use. Large interfaces should be
+        split into smaller, more specific interfaces.
+    </div>
+    `
+},
+  "What is DIP (Dependency Inversion Principle)?": {
     "answer": `
-<h3>Answer</h3>
-<p>
-DIP stands for Dependency Inversion Principle, which suggests depending on abstractions rather than concrete implementations.
-</p>
-`
-  },
+    <p>
+        <strong>DIP (Dependency Inversion Principle)</strong> is the fifth and
+        final principle of <strong>SOLID</strong>. It states that
+        <strong>high-level modules should not depend on low-level modules.
+        Both should depend on abstractions (interfaces).</strong>
+    </p>
+
+    <p>
+        In simple terms, instead of directly creating objects using
+        <strong>new</strong>, classes should depend on interfaces.
+        The actual implementation is provided through
+        <strong>Dependency Injection (DI)</strong>.
+    </p>
+
+    <p><strong>Without DIP</strong></p>
+
+    <pre><code class="language-text">
+OrderService
+      │
+      ▼
+EmailService
+
+Tightly Coupled
+    </code></pre>
+
+    <p><strong>With DIP</strong></p>
+
+    <pre><code class="language-text">
+          INotification
+                ▲
+        ┌───────┴────────┐
+        │                │
+ EmailService      SmsService
+        │                │
+        └───────┬────────┘
+                ▼
+          OrderService
+
+Loosely Coupled
+    </code></pre>
+
+    <p><strong>Without DIP Example</strong></p>
+
+    <pre><code class="language-csharp">
+public class OrderService
+{
+    private EmailService emailService =
+        new EmailService();
+
+    public void PlaceOrder()
+    {
+        emailService.Send();
+    }
+}
+    </code></pre>
+
+    <p><strong>With DIP Example</strong></p>
+
+    <pre><code class="language-csharp">
+public interface INotification
+{
+    void Send();
+}
+
+public class EmailService : INotification
+{
+    public void Send()
+    {
+        Console.WriteLine("Email Sent");
+    }
+}
+
+public class SmsService : INotification
+{
+    public void Send()
+    {
+        Console.WriteLine("SMS Sent");
+    }
+}
+
+public class OrderService
+{
+    private readonly INotification notification;
+
+    public OrderService(INotification notification)
+    {
+        this.notification = notification;
+    }
+
+    public void PlaceOrder()
+    {
+        notification.Send();
+    }
+}
+    </code></pre>
+
+    <p><strong>Benefits</strong></p>
+
+    <ul>
+        <li>Reduces tight coupling.</li>
+        <li>Improves flexibility.</li>
+        <li>Makes unit testing easier using mock implementations.</li>
+        <li>Supports Dependency Injection.</li>
+        <li>Allows implementations to change without modifying business logic.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an e-commerce application, <strong>OrderService</strong> depends on
+        the <strong>INotification</strong> interface instead of directly
+        depending on <strong>EmailService</strong>. If the business later
+        requires SMS, WhatsApp, or Push Notifications, we simply create new
+        implementations without changing <strong>OrderService</strong>.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        The Dependency Inversion Principle states that high-level modules should
+        depend on abstractions rather than concrete implementations. This reduces
+        coupling and is typically achieved using interfaces and Dependency Injection.
+    </div>
+    `
+},
   "SOLID Principles with Real-Life Examples": {
     "answer": `
     <p>
@@ -602,4 +1075,5 @@ Design Patterns
     </div>
     `
 },
+
 };

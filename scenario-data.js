@@ -178,5 +178,60 @@ Verify Performance
     </div>
     `
 },
+"Tell me about yourself": {
+    "answer": `
+    <p>
+        Good morning. My name is <strong>Suneel Kumar Gupta</strong>, and I have
+        over <strong>12 years of experience</strong> in designing, developing,
+        and maintaining enterprise web applications using
+        <strong>ASP.NET, ASP.NET Core, .NET Core Web API, C#, SQL Server, and Angular</strong>.
+    </p>
 
+    <p>
+        Currently, I am working as a <strong>Technical Analyst at Coforge</strong>
+        for the <strong>SEI</strong> client in the Wealth Management domain.
+        I am involved in the complete software development lifecycle, from
+        requirement analysis and development to deployment and production support.
+    </p>
+
+    <p><strong>My Responsibilities</strong></p>
+
+    <ul>
+        <li>Developing new features and enhancing existing applications.</li>
+        <li>Designing and developing RESTful Web APIs.</li>
+        <li>Writing optimized SQL queries, stored procedures, and database objects.</li>
+        <li>Fixing production issues and debugging application defects.</li>
+        <li>Performing code reviews and following coding standards.</li>
+        <li>Working closely with business analysts, QA teams, and clients.</li>
+        <li>Consuming and integrating third-party APIs.</li>
+        <li>Application performance tuning and optimization.</li>
+        <li>Framework and library upgrades (such as .NET Framework and jQuery).</li>
+        <li>Legacy application modernization and migration activities.</li>
+        <li>Source code management using Git and Bitbucket.</li>
+        <li>Supporting deployments using CI/CD pipelines.</li>
+    </ul>
+
+    <p><strong>Technical Skills</strong></p>
+
+    <ul>
+        <li>ASP.NET, ASP.NET Core, .NET Core Web API</li>
+        <li>Angular, JavaScript, HTML, CSS</li>
+        <li>C#, Entity Framework, LINQ</li>
+        <li>SQL Server, Stored Procedures</li>
+        <li>REST APIs</li>
+        <li>Azure Fundamentals</li>
+        <li>Git, Bitbucket, Jenkins, Octopus Deploy</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        I am a Senior .NET Developer with 12+ years of experience in developing,
+        enhancing, and maintaining enterprise applications. My work includes
+        building Web APIs, database development, performance optimization,
+        framework migration, third-party API integration, production support,
+        and application deployment.
+    </div>
+    `
+},
 };

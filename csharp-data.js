@@ -193,7 +193,8 @@ window.data.csharp = {
         <strong>Reflection</strong> is a feature in C# that allows a program to
         inspect and interact with its own metadata at runtime. Using Reflection,
         you can examine assemblies, classes, methods, properties, fields, and
-        dynamically create objects or invoke methods.
+        dynamically create objects or invoke methods.<br/>
+        Reflection is a feature in .NET that allows you to inspect and manipulate metadata about assemblies, types, methods, properties, fields, and attributes at runtime.
     </p>
 
     <p>
@@ -248,37 +249,6 @@ window.data.csharp = {
     <div class="interview-answer">
         <strong>Interview One-Liner:</strong>
         Use <code>const</code> for values that never change and are known at compile time, and <code>readonly</code> for values that are initialized at runtime and remain unchanged thereafter.
-    </div>
-    `
-},
-"IEnumerable and IQueryable in C#?": {
-    "answer": `
-    <p>
-        Both <code>IEnumerable</code> and <code>IQueryable</code> are used to query collections,
-        but they differ in where the query is executed.
-    </p>
-
-    <p>
-        <code>IEnumerable</code> executes the query in memory after the data has been
-        loaded from the database. <code>IQueryable</code> builds the query and executes
-        it on the database server, fetching only the required data.
-    </p>
-
-    <p><strong>Key Differences:</strong></p>
-
-    <ul>
-        <li><strong>IEnumerable</strong> → Executes query in memory.</li>
-        <li><strong>IQueryable</strong> → Executes query on the database.</li>
-        <li><strong>IEnumerable</strong> → Suitable for in-memory collections.</li>
-        <li><strong>IQueryable</strong> → Suitable for Entity Framework and LINQ to SQL.</li>
-        <li><strong>IEnumerable</strong> → Retrieves all records before filtering.</li>
-        <li><strong>IQueryable</strong> → Retrieves only filtered records from the database.</li>
-    </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        <code>IEnumerable</code> performs filtering in memory, whereas
-        <code>IQueryable</code> performs filtering at the database level, making it more efficient for large datasets.
     </div>
     `
 },
@@ -1033,6 +1003,231 @@ string name = users[1];
         Hashtable is a legacy non-generic collection that stores object types,
         whereas Generic Collections like Dictionary&lt;TKey, TValue&gt; are
         type-safe, faster, and preferred in modern .NET applications.
+    </div>
+    `
+},
+"What is the null-coalescing operator (??) and null-conditional operator (?.)?": {
+    "answer": `
+    <p>
+        The <strong>null-coalescing operator (??)</strong> returns the left-hand
+        operand if it is not <strong>null</strong>; otherwise, it returns the
+        right-hand operand. It is commonly used to provide default values.
+    </p>
+
+    <p>
+        The <strong>null-conditional operator (?.)</strong> safely accesses
+        members of an object. If the object is <strong>null</strong>, the
+        operation stops and returns <strong>null</strong> instead of throwing
+        a <strong>NullReferenceException</strong>.
+    </p>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-csharp">
+string name = null;
+
+string display = name ?? "Guest";
+// Output: Guest
+
+int? len = name?.Length;
+// Output: null (No Exception)
+
+Console.WriteLine(name?.ToUpper() ?? "No name");
+// Output: No name
+    </code></pre>
+
+    <p><strong>Use Cases</strong></p>
+
+    <ul>
+        <li><strong>??</strong> - Assign a default value when an object is null.</li>
+        <li><strong>?.</strong> - Safely access properties, methods, or fields without null checks.</li>
+        <li>Both operators can be combined to write concise, null-safe code.</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        The <strong>??</strong> operator provides a default value when an object
+        is null, while the <strong>?.</strong> operator safely accesses object
+        members without throwing a NullReferenceException. Together, they simplify
+        null handling and improve code readability.
+    </div>
+    `
+},
+"What are init-only setters and what problem do they solve?": {
+    "answer": `
+    <p>
+        <strong>Init-only setters</strong> were introduced in <strong>C# 9.0</strong>.
+        They allow a property to be assigned only during <strong>object initialization</strong>
+        or inside a constructor. Once the object is created, the property becomes
+        <strong>read-only</strong> and cannot be modified.
+    </p>
+
+    <p>
+        Init-only setters solve the problem of creating
+        <strong>immutable objects</strong> while still allowing the convenient
+        object initializer syntax. They are commonly used for
+        <strong>DTOs, configuration objects, and records</strong>.
+    </p>
+
+    <p><strong>How init Works</strong></p>
+
+    <pre><code class="language-text">
+Object Creation
+      │
+      ▼
+Initialize Properties
+(using init)
+      │
+      ▼
+Object Created
+      │
+      ▼
+Properties Become Read-Only
+    </code></pre>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-csharp">
+public class Order
+{
+    public int Id { get; init; }
+
+    public string Product { get; init; }
+}
+
+var order = new Order
+{
+    Id = 1,
+    Product = "Book"
+};
+
+// Compile-time Error
+order.Id = 2;
+    </code></pre>
+
+    <p><strong>Benefits</strong></p>
+
+    <ul>
+        <li>Supports immutable object design.</li>
+        <li>Allows object initializer syntax.</li>
+        <li>Prevents accidental property modification.</li>
+        <li>Improves thread safety.</li>
+        <li>Ideal for DTOs, records, and configuration classes.</li>
+    </ul>
+
+    <p><strong>init vs set</strong></p>
+
+    <ul>
+        <li><strong>set</strong> - Property can be modified anytime.</li>
+        <li><strong>init</strong> - Property can only be assigned during object creation.</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Init-only setters allow properties to be assigned only during object
+        initialization, providing immutable objects while retaining the simplicity
+        of object initializer syntax. They are commonly used for DTOs, records,
+        and configuration objects.
+    </div>
+    `
+},
+"Difference between ASP.NET Framework and ASP.NET Core": {
+    "answer": `
+    <p>
+        <strong>ASP.NET Framework</strong> is the traditional Microsoft web
+        framework that runs only on Windows and is tightly coupled with the
+        .NET Framework. <strong>ASP.NET Core</strong> is a modern, lightweight,
+        open-source, cross-platform framework for building cloud-native and
+        high-performance web applications.
+    </p>
+
+    <p><strong>Architecture Overview</strong></p>
+
+    <pre><code class="language-text">
+ASP.NET Framework
+       │
+       ▼
+.NET Framework
+       │
+       ▼
+Windows Only
+       │
+       ▼
+IIS
+
+
+ASP.NET Core
+       │
+       ▼
+.NET (.NET Core / .NET 5+)
+       │
+       ▼
+Windows | Linux | macOS
+       │
+       ▼
+Kestrel + IIS / Nginx / Apache
+    </code></pre>
+
+    <p><strong>Key Differences</strong></p>
+
+    <ul>
+        <li><strong>Platform</strong> - ASP.NET Framework runs only on Windows, whereas ASP.NET Core is cross-platform.</li>
+        <li><strong>Performance</strong> - ASP.NET Core is significantly faster and optimized for modern applications.</li>
+        <li><strong>Hosting</strong> - ASP.NET Framework uses IIS, whereas ASP.NET Core uses Kestrel and can also run behind IIS, Nginx, or Apache.</li>
+        <li><strong>Dependency Injection</strong> - Built-in support in ASP.NET Core; external libraries are typically required in ASP.NET Framework.</li>
+        <li><strong>Configuration</strong> - ASP.NET Framework uses Web.config, whereas ASP.NET Core uses appsettings.json and Program.cs.</li>
+        <li><strong>Deployment</strong> - ASP.NET Core supports self-contained deployment and side-by-side runtime versions.</li>
+        <li><strong>Middleware</strong> - ASP.NET Core uses a middleware pipeline; ASP.NET Framework uses the HTTP Module and HTTP Handler pipeline.</li>
+        <li><strong>Cloud Support</strong> - ASP.NET Core is designed for cloud and microservices architectures.</li>
+    </ul>
+
+    <p><strong>Configuration Example</strong></p>
+
+    <pre><code class="language-text">
+ASP.NET Framework
+-----------------
+Web.config
+Global.asax
+
+
+ASP.NET Core
+------------
+Program.cs
+appsettings.json
+Middleware
+    </code></pre>
+
+    <p><strong>Advantages of ASP.NET Core</strong></p>
+
+    <ul>
+        <li>Cross-platform support.</li>
+        <li>High performance.</li>
+        <li>Built-in Dependency Injection.</li>
+        <li>Built-in Middleware pipeline.</li>
+        <li>Cloud-ready and container-friendly.</li>
+        <li>Excellent support for Microservices and REST APIs.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In my current project, we migrated applications from
+        <strong>ASP.NET Framework 3.5/4.x</strong> to a modern platform by
+        upgrading frameworks and related libraries, improving browser
+        compatibility, application performance, and maintainability.
+        For new development, we use ASP.NET Core because of its better
+        performance, built-in Dependency Injection, middleware pipeline,
+        and cloud support.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        ASP.NET Framework is a Windows-only web framework built on the .NET Framework,
+        whereas ASP.NET Core is a modern, cross-platform, high-performance framework
+        with built-in Dependency Injection, middleware, and cloud-native support.
     </div>
     `
 },

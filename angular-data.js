@@ -1424,6 +1424,105 @@ this.http.get<Employee[]>('/api/employees')
     </div>
     `
 },
+"What is a Route Guard in Angular?": {
+    "answer": `
+    <p>
+        A <strong>Route Guard</strong> is an Angular service that controls
+        navigation between routes. It determines whether a user is allowed to
+        access, leave, or load a route based on specific conditions such as
+        authentication, authorization, or unsaved changes.
+    </p>
+
+    <p>
+        Route Guards improve application security by preventing unauthorized
+        users from accessing protected pages.
+    </p>
+
+    <p><strong>Route Guard Flow</strong></p>
+
+    <pre><code class="language-text">
+User Requests Route
+        │
+        ▼
+Angular Router
+        │
+        ▼
+Route Guard
+        │
+   ┌────┴────┐
+   │         │
+Allowed   Not Allowed
+   │         │
+   ▼         ▼
+Component  Redirect
+            (Login / Access Denied)
+    </code></pre>
+
+    <p><strong>Types of Route Guards</strong></p>
+
+    <ul>
+        <li><strong>CanActivate</strong> - Controls whether a route can be activated.</li>
+        <li><strong>CanActivateChild</strong> - Protects child routes.</li>
+        <li><strong>CanDeactivate</strong> - Prevents leaving a page (for example, unsaved changes).</li>
+        <li><strong>CanLoad</strong> - Prevents loading a lazy-loaded module.</li>
+        <li><strong>CanMatch</strong> - Determines whether a route matches and should be activated (recommended in newer Angular versions).</li>
+    </ul>
+
+    <p><strong>Example - CanActivate Guard</strong></p>
+
+    <pre><code class="language-typescript">
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  canActivate(): boolean {
+
+    if (this.authService.isLoggedIn()) {
+      return true;
+    }
+
+    this.router.navigate(['/login']);
+    return false;
+  }
+}
+    </code></pre>
+
+    <p><strong>Registering the Guard</strong></p>
+
+    <pre><code class="language-typescript">
+const routes: Routes = [
+{
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard]
+}
+];
+    </code></pre>
+
+    <p><strong>Common Use Cases</strong></p>
+
+    <ul>
+        <li>Restrict access to authenticated users.</li>
+        <li>Role-based authorization (Admin/User).</li>
+        <li>Prevent users from leaving forms with unsaved changes.</li>
+        <li>Protect lazy-loaded modules.</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        A Route Guard is an Angular service that controls navigation between
+        routes. It allows or blocks access to routes based on conditions such as
+        authentication, authorization, or application state.
+    </div>
+    `
+},
 "How would you implement state management using NgRx?": {
     "answer": `
     <p>
@@ -1693,6 +1792,108 @@ Module Already Available
     </div>
     `
 },
+"What is @Injectable in Angular?": {
+    "answer": `
+    <p>
+        <strong>@Injectable</strong> is an Angular decorator that marks a class
+        as a <strong>service</strong> that can participate in Angular's
+        <strong>Dependency Injection (DI)</strong> system.
+    </p>
+
+    <p>
+        It tells Angular that the class may have dependencies that need to be
+        injected and allows Angular to create and manage the service instance.
+    </p>
+
+    <p><strong>Dependency Injection Flow</strong></p>
+
+    <pre><code class="language-text">
+Component
+     │
+Requests Service
+     │
+     ▼
+Angular Injector
+     │
+Creates (if needed)
+     │
+     ▼
+@Injectable Service
+     │
+     ▼
+Returned to Component
+    </code></pre>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-typescript">
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProductService {
+
+  constructor() { }
+
+  getProducts() {
+    return [];
+  }
+}
+    </code></pre>
+
+    <p><strong>Using the Service</strong></p>
+
+    <pre><code class="language-typescript">
+@Component({
+  selector: 'app-product-list'
+})
+export class ProductListComponent {
+
+  constructor(
+    private productService: ProductService
+  ) { }
+
+}
+    </code></pre>
+
+    <p><strong>What does providedIn: 'root' mean?</strong></p>
+
+    <ul>
+        <li>Registers the service in the application's root injector.</li>
+        <li>Creates a single shared instance (Singleton).</li>
+        <li>Service is available throughout the application.</li>
+        <li>Supports tree shaking by removing unused services from the bundle.</li>
+    </ul>
+
+    <p><strong>Other Provider Scopes</strong></p>
+
+    <ul>
+        <li><strong>providedIn: 'root'</strong> - One instance for the entire application.</li>
+        <li><strong>providedIn: 'platform'</strong> - Shared across Angular applications on the same page.</li>
+        <li><strong>providers</strong> in a component - New instance per component.</li>
+        <li><strong>providers</strong> in a module - Shared within that module.</li>
+    </ul>
+
+    <p><strong>Advantages</strong></p>
+
+    <ul>
+        <li>Supports Dependency Injection.</li>
+        <li>Promotes loose coupling.</li>
+        <li>Improves code reusability.</li>
+        <li>Simplifies testing using mock services.</li>
+        <li>Provides singleton services when required.</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        @Injectable is an Angular decorator that marks a class as a service
+        participating in Dependency Injection. It allows Angular to create,
+        manage, and inject service instances wherever they are needed.
+    </div>
+    `
+},
 "Secure Angular app against XSS and CSRF attacks?": {
     "answer": `
     <p>
@@ -1953,6 +2154,100 @@ this.users$ = this.http.get('/api/users')
         and tree shaking, minimizing change detection with OnPush, async pipe,
         and trackBy, and improving response time using API caching,
         shareReplay(), browser caching, and service workers.
+    </div>
+    `
+},
+"What are Lifecycle Hooks in Angular?": {
+    "answer": `
+    <p>
+        <strong>Lifecycle Hooks</strong> are special methods provided by Angular
+        that allow developers to execute code at different stages of a component's
+        lifecycle, such as creation, initialization, change detection, rendering,
+        and destruction.
+    </p>
+
+    <p>
+        They are commonly used to initialize data, respond to input changes,
+        perform custom change detection, access child components, and clean up
+        resources before a component is destroyed.
+    </p>
+
+    <p><strong>Angular Component Lifecycle</strong></p>
+
+    <pre><code class="language-text">
+Constructor
+      │
+      ▼
+ngOnChanges
+      │
+      ▼
+ngOnInit
+      │
+      ▼
+ngDoCheck
+      │
+      ▼
+ngAfterContentInit
+      │
+      ▼
+ngAfterContentChecked
+      │
+      ▼
+ngAfterViewInit
+      │
+      ▼
+ngAfterViewChecked
+      │
+      ▼
+ngOnDestroy
+    </code></pre>
+
+    <p><strong>Common Lifecycle Hooks</strong></p>
+
+    <ul>
+        <li><strong>constructor</strong> - Initializes the class and injects dependencies.</li>
+        <li><strong>ngOnChanges</strong> - Called when an @Input property changes.</li>
+        <li><strong>ngOnInit</strong> - Called once after component initialization.</li>
+        <li><strong>ngDoCheck</strong> - Invoked during every change detection cycle.</li>
+        <li><strong>ngAfterContentInit</strong> - Called after projected content is initialized.</li>
+        <li><strong>ngAfterContentChecked</strong> - Called after projected content is checked.</li>
+        <li><strong>ngAfterViewInit</strong> - Called after the component view and child views are initialized.</li>
+        <li><strong>ngAfterViewChecked</strong> - Called after the component view is checked.</li>
+        <li><strong>ngOnDestroy</strong> - Called before the component is destroyed.</li>
+    </ul>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-typescript">
+export class ProductComponent
+implements OnInit, OnDestroy {
+
+  ngOnInit(): void {
+    console.log('Component Initialized');
+  }
+
+  ngOnDestroy(): void {
+    console.log('Component Destroyed');
+  }
+
+}
+    </code></pre>
+
+    <p><strong>Common Uses</strong></p>
+
+    <ul>
+        <li>Load data from APIs in ngOnInit().</li>
+        <li>Detect input changes using ngOnChanges().</li>
+        <li>Access ViewChild elements in ngAfterViewInit().</li>
+        <li>Unsubscribe from Observables in ngOnDestroy().</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Lifecycle Hooks are Angular methods that allow developers to execute
+        code at different stages of a component's lifecycle, from creation and
+        initialization to change detection and destruction.
     </div>
     `
 },
@@ -2451,4 +2746,242 @@ this.http.get<User>('/api/user').pipe(
     </div>
     `
 },
+
+"If an Angular application takes a long time to load, how would you improve its performance?": {
+    "answer": `
+    <p>
+        If an Angular application is slow to load, I first identify whether the
+        issue is related to the <strong>initial bundle size</strong>,
+        <strong>API calls</strong>, <strong>change detection</strong>,
+        <strong>rendering</strong>, or <strong>network latency</strong>.
+        Then I apply appropriate optimization techniques.
+    </p>
+
+    <p><strong>Performance Optimization Process</strong></p>
+
+    <pre><code class="language-text">
+Slow Angular Application
+          │
+          ▼
+Analyze Performance
+          │
+          ├── Large Bundle
+          ├── Slow APIs
+          ├── Too Many Components
+          ├── Large Images
+          ├── Unnecessary Change Detection
+          └── Multiple HTTP Calls
+          │
+          ▼
+Apply Optimizations
+          │
+          ▼
+Faster Application
+    </code></pre>
+
+    <p><strong>Common Optimization Techniques</strong></p>
+
+    <ul>
+        <li>Implement Lazy Loading for feature modules.</li>
+        <li>Enable production build using <strong>ng build --configuration production</strong>.</li>
+        <li>Use OnPush Change Detection where applicable.</li>
+        <li>Use trackBy with *ngFor to minimize DOM updates.</li>
+        <li>Load independent APIs in parallel using <strong>forkJoin()</strong>.</li>
+        <li>Implement caching for frequently used data.</li>
+        <li>Compress and optimize images.</li>
+        <li>Remove unused libraries and code.</li>
+        <li>Enable Gzip/Brotli compression on the server.</li>
+        <li>Minimize bundle size using tree shaking and code splitting.</li>
+    </ul>
+
+    <p><strong>Example - Lazy Loading</strong></p>
+
+    <pre><code class="language-typescript">
+{
+  path: 'admin',
+  loadChildren: () =>
+    import('./admin/admin.module')
+      .then(m => m.AdminModule)
+}
+    </code></pre>
+
+    <p><strong>Example - OnPush Change Detection</strong></p>
+
+    <pre><code class="language-typescript">
+@Component({
+  selector: 'app-product',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ProductComponent { }
+    </code></pre>
+
+    <p><strong>Example - trackBy</strong></p>
+
+    <pre><code class="language-html">
+&lt;li *ngFor="let emp of employees; trackBy: trackById"&gt;
+  {{ emp.name }}
+&lt;/li&gt;
+    </code></pre>
+
+    <pre><code class="language-typescript">
+trackById(index: number, item: any) {
+  return item.id;
+}
+    </code></pre>
+
+    <p><strong>Tools Used for Analysis</strong></p>
+
+    <ul>
+        <li>Chrome DevTools (Network & Performance tabs).</li>
+        <li>Angular DevTools.</li>
+        <li>Lighthouse.</li>
+        <li>Source Map Explorer (Bundle Analysis).</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In one project, the dashboard loaded slowly because several feature
+        modules were loaded during application startup and multiple APIs were
+        called sequentially. We implemented lazy loading, loaded independent APIs
+        in parallel using <strong>forkJoin()</strong>, enabled production build,
+        and optimized images, which significantly reduced the page load time.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        To improve Angular application performance, I first identify the
+        bottleneck using Chrome DevTools and Angular DevTools. Then I optimize
+        bundle size with lazy loading and production builds, improve rendering
+        using OnPush and trackBy, parallelize API calls where possible, cache
+        frequently used data, and optimize static assets such as images.
+    </div>
+    `
+},
+"What are Reactive Forms in Angular?": {
+    "answer": `
+    <p>
+        <strong>Reactive Forms</strong> are a model-driven approach for creating
+        and managing forms in Angular. The form structure, validation, and data
+        are defined and controlled in the <strong>TypeScript component</strong>
+        rather than in the HTML template.
+    </p>
+
+    <p>
+        Reactive Forms provide better scalability, testability, and maintainability,
+        making them the preferred choice for complex forms in enterprise
+        applications.
+    </p>
+
+    <p><strong>Reactive Form Flow</strong></p>
+
+    <pre><code class="language-text">
+Component (.ts)
+      │
+Create FormGroup
+      │
+      ▼
+FormControl
+      │
+      ▼
+Validation
+      │
+      ▼
+HTML Template
+      │
+      ▼
+User Input
+      │
+      ▼
+Form Model Updated
+    </code></pre>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-typescript">
+import { FormBuilder, Validators } from '@angular/forms';
+
+export class LoginComponent {
+
+  constructor(private fb: FormBuilder) {}
+
+  loginForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required]
+  });
+
+  onSubmit() {
+    console.log(this.loginForm.value);
+  }
+}
+    </code></pre>
+
+    <p><strong>HTML</strong></p>
+
+    <pre><code class="language-html">
+&lt;form [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"&gt;
+
+  &lt;input
+      formControlName="email"&gt;
+
+  &lt;input
+      type="password"
+      formControlName="password"&gt;
+
+  &lt;button type="submit"&gt;
+      Login
+  &lt;/button&gt;
+
+&lt;/form&gt;
+    </code></pre>
+
+    <p><strong>Main Building Blocks</strong></p>
+
+    <ul>
+        <li><strong>FormControl</strong> - Represents a single form field.</li>
+        <li><strong>FormGroup</strong> - Groups multiple FormControls.</li>
+        <li><strong>FormArray</strong> - Represents a dynamic list of controls.</li>
+        <li><strong>Validators</strong> - Performs form validation.</li>
+    </ul>
+
+    <p><strong>Advantages</strong></p>
+
+    <ul>
+        <li>Model-driven approach.</li>
+        <li>Easy to implement complex validations.</li>
+        <li>Better unit testing.</li>
+        <li>Supports dynamic forms using FormArray.</li>
+        <li>Provides synchronous access to form data.</li>
+    </ul>
+
+    <p><strong>When to Use</strong></p>
+
+    <ul>
+        <li>Large or complex forms.</li>
+        <li>Dynamic forms.</li>
+        <li>Custom validation.</li>
+        <li>Enterprise applications.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        A customer registration form with multiple sections, dynamic address
+        fields, and complex validations is best implemented using Reactive Forms
+        because all form logic is managed in the component, making it easier to
+        maintain and test.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Reactive Forms are Angular's model-driven forms where the form model,
+        validation, and business logic are managed in the TypeScript component.
+        They are ideal for complex, dynamic, and enterprise-level applications.
+    </div>
+    `
+},
+
 };

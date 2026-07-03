@@ -1386,4 +1386,223 @@ WHERE Salary > 50000;
     </div>
     `
 },
+"What is a Deadlock in SQL? How do you handle it?": {
+    "answer": `
+    <p>
+        A <strong>Deadlock</strong> occurs when two or more transactions block
+        each other by holding locks on resources that the other transaction
+        needs. Since neither transaction can proceed, SQL Server detects the
+        deadlock and automatically terminates one transaction (called the
+        <strong>Deadlock Victim</strong>) to resolve it.
+    </p>
+
+    <p><strong>Deadlock Scenario</strong></p>
+
+    <pre><code class="language-text">
+Transaction A
+      │
+Locks Table A
+      │
+Waiting for Table B
+      ▲
+      │
+Locks Table B
+      │
+Transaction B
+Waiting for Table A
+
+Deadlock Occurs
+    </code></pre>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-sql">
+-- Transaction 1
+BEGIN TRAN
+
+UPDATE Customers
+SET Name = 'John'
+WHERE Id = 1;
+
+-- Waiting...
+UPDATE Orders
+SET Status = 'Completed'
+WHERE Id = 100;
+
+COMMIT;
+    </code></pre>
+
+    <pre><code class="language-sql">
+-- Transaction 2
+BEGIN TRAN
+
+UPDATE Orders
+SET Status = 'Pending'
+WHERE Id = 100;
+
+-- Waiting...
+UPDATE Customers
+SET Name = 'David'
+WHERE Id = 1;
+
+COMMIT;
+    </code></pre>
+
+    <p>
+        Transaction 1 holds a lock on <strong>Customers</strong> and waits for
+        <strong>Orders</strong>, while Transaction 2 holds a lock on
+        <strong>Orders</strong> and waits for <strong>Customers</strong>.
+        Neither transaction can continue, resulting in a deadlock.
+    </p>
+
+    <p><strong>How SQL Server Handles Deadlocks</strong></p>
+
+    <ul>
+        <li>Detects the deadlock automatically.</li>
+        <li>Selects one transaction as the <strong>Deadlock Victim</strong>.</li>
+        <li>Rolls back the victim transaction.</li>
+        <li>Allows the other transaction to continue.</li>
+    </ul>
+  <p><strong>How does SQL Server choose the Deadlock Victim?</strong></p>
+<ul>
+        <li>DEADLOCK_PRIORITY. low high or 1, 2 ,0 </li>
+        <li>Cost of Rollback.</li>
+
+    </ul>
+
+   <p><strong>How to Prevent Deadlocks</strong></p>
+    <ul>
+        <li>Access tables in the same order in all transactions.</li>
+        <li>Keep transactions as short as possible.</li>
+        <li>Commit or rollback transactions quickly.</li>
+        <li>Create proper indexes to reduce locking time.</li>
+        <li>Avoid user interaction inside transactions.</li>
+        <li>Use the appropriate transaction isolation level.</li>
+        <li>Implement retry logic in the application for deadlock errors.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an online banking application, one transaction updates the
+        <strong>Account</strong> table and then the
+        <strong>Transaction</strong> table, while another transaction updates
+        them in the opposite order. If both execute simultaneously, a deadlock
+        can occur. The solution is to access tables in the same order and
+        implement retry logic if a deadlock is detected.
+    </p>
+
+    
+
+   
+    `
+},
+"What is a Race Condition?": {
+    "answer": `
+    <p>
+        A <strong>Race Condition</strong> occurs when two or more threads or
+        processes access and modify the same shared resource simultaneously, and
+        the final result depends on the order in which they execute.
+    </p>
+
+    <p>
+        Because thread execution order is unpredictable, race conditions can
+        lead to incorrect data, inconsistent application state, and unexpected
+        behavior.
+    </p>
+
+    <p><strong>Race Condition Flow</strong></p>
+
+    <pre><code class="language-text">
+Shared Variable = 100
+
+Thread A              Thread B
+    │                     │
+Read 100             Read 100
+    │                     │
++10                  -20
+    │                     │
+Write 110           Write 80
+
+Final Value = 80 (Incorrect)
+Expected = 90
+    </code></pre>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-csharp">
+class Counter
+{
+    public int Count = 0;
+
+    public void Increment()
+    {
+        Count++;
+    }
+}
+    </code></pre>
+
+    <pre><code class="language-csharp">
+Parallel.For(0, 1000, i =>
+{
+    counter.Increment();
+});
+
+Console.WriteLine(counter.Count);
+    </code></pre>
+
+    <p>
+        The expected value is <strong>1000</strong>, but due to multiple threads
+        updating the shared variable simultaneously, the actual value may be less.
+    </p>
+
+    <p><strong>How to Prevent Race Conditions</strong></p>
+
+    <ul>
+        <li>Use the <strong>lock</strong> statement.</li>
+        <li>Use <strong>Monitor</strong> for explicit synchronization.</li>
+        <li>Use the <strong>Interlocked</strong> class for atomic operations.</li>
+        <li>Use thread-safe collections such as ConcurrentDictionary.</li>
+        <li>Avoid shared mutable state where possible.</li>
+    </ul>
+
+    <p><strong>Example Using lock</strong></p>
+
+    <pre><code class="language-csharp">
+private readonly object _lock = new();
+
+public void Increment()
+{
+    lock (_lock)
+    {
+        Count++;
+    }
+}
+    </code></pre>
+
+    <p><strong>Example Using Interlocked</strong></p>
+
+    <pre><code class="language-csharp">
+Interlocked.Increment(ref Count);
+    </code></pre>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an online banking application, two users try to withdraw money from
+        the same account at the same time. Without proper synchronization, both
+        transactions may read the same balance before either update is saved,
+        resulting in an incorrect account balance.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        A race condition occurs when multiple threads access and modify shared
+        data simultaneously, causing unpredictable results. It can be prevented
+        using synchronization techniques such as lock, Monitor, Interlocked, or
+        other thread-safe mechanisms.
+    </div>
+    `
+},
 };

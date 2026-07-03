@@ -2,12 +2,85 @@ window.data = window.data || {};
 window.data.azure = {
   "What is Azure?": {
     "answer": `
-        <h3>Answer</h3>
-        <p>
-        Azure is Microsoft's cloud computing platform that provides a wide range of services including computing, storage, and networking.
-        </p>
-        `
-  },
+    <p>
+        <strong>Microsoft Azure</strong> is a cloud computing platform developed
+        by Microsoft. It provides a wide range of cloud services such as
+        computing, storage, networking, databases, AI, analytics, security,
+        and DevOps to build, deploy, and manage applications through Microsoft's
+        global network of data centers.
+    </p>
+
+    <p>
+        Azure supports multiple programming languages, frameworks, and operating
+        systems, making it suitable for hosting web applications, APIs,
+        microservices, virtual machines, and enterprise solutions.
+    </p>
+
+    <p><strong>Azure Architecture</strong></p>
+
+    <pre><code class="language-text">
+Users
+      │
+      ▼
+Azure Services
+      │
+      ├── Compute
+      ├── Storage
+      ├── Networking
+      ├── Database
+      ├── Security
+      └── DevOps
+      │
+      ▼
+Applications
+      │
+      ▼
+Global Azure Data Centers
+    </code></pre>
+
+    <p><strong>Core Azure Services</strong></p>
+
+    <ul>
+        <li><strong>Compute</strong> - Virtual Machines, App Service, Azure Functions.</li>
+        <li><strong>Storage</strong> - Blob Storage, File Storage, Queue Storage.</li>
+        <li><strong>Database</strong> - Azure SQL Database, Cosmos DB.</li>
+        <li><strong>Networking</strong> - Virtual Network, Load Balancer, VPN Gateway.</li>
+        <li><strong>Identity</strong> - Azure Active Directory (Microsoft Entra ID).</li>
+        <li><strong>DevOps</strong> - Azure DevOps, Azure Repos, Azure Pipelines.</li>
+        <li><strong>Monitoring</strong> - Azure Monitor, Application Insights.</li>
+    </ul>
+
+    <p><strong>Advantages</strong></p>
+
+    <ul>
+        <li>Pay-as-you-go pricing.</li>
+        <li>High availability and scalability.</li>
+        <li>Built-in security and compliance.</li>
+        <li>Global data center network.</li>
+        <li>Supports hybrid cloud solutions.</li>
+        <li>Easy integration with .NET and Microsoft products.</li>
+    </ul>
+
+    <p><strong>Common Use Cases</strong></p>
+
+    <ul>
+        <li>Host Angular and .NET applications.</li>
+        <li>Deploy REST APIs and microservices.</li>
+        <li>Store files and application data.</li>
+        <li>Automate CI/CD pipelines.</li>
+        <li>Run background jobs using Azure Functions.</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Microsoft Azure is a cloud computing platform that provides services
+        for computing, storage, networking, databases, security, and DevOps,
+        enabling organizations to build, deploy, and scale applications without
+        managing physical infrastructure.
+    </div>
+    `
+},
   "What is Azure App Service? What is the purpose of using it?": {
     "answer": `
     <p>
@@ -817,6 +890,116 @@ Ideal for business workflows	Ideal for event-driven processing
         <strong>Interview One-Liner:</strong>
         Azure Web App Publish is the process of deploying a web application or API
         to Azure App Service, enabling secure, scalable, and fully managed hosting.
+    </div>
+    `
+},
+"What is Application Insights?": {
+    "answer": `
+    <p>
+        <strong>Application Insights</strong> is an application performance
+        monitoring (APM) service provided by <strong>Microsoft Azure</strong>.
+        It helps developers monitor the availability, performance, and usage of
+        web applications, APIs, and cloud services in real time.
+    </p>
+
+    <p>
+        It automatically collects telemetry such as requests, exceptions,
+        dependencies, performance metrics, and logs, making it easier to detect,
+        diagnose, and troubleshoot application issues.
+    </p>
+
+    <p><strong>Application Insights Flow</strong></p>
+
+    <pre><code class="language-text">
+Users
+   │
+   ▼
+Application
+   │
+   ▼
+Application Insights SDK
+   │
+Collects Telemetry
+   │
+   ├── Requests
+   ├── Exceptions
+   ├── Dependencies
+   ├── Performance
+   ├── Logs
+   └── Custom Events
+   │
+   ▼
+Azure Application Insights
+   │
+   ▼
+Dashboard / Alerts / Analytics
+    </code></pre>
+
+    <p><strong>What Application Insights Monitors</strong></p>
+
+    <ul>
+        <li>Request execution time.</li>
+        <li>Failed requests and exceptions.</li>
+        <li>Dependency calls (SQL, HTTP, Redis, etc.).</li>
+        <li>Response time and performance.</li>
+        <li>Availability tests.</li>
+        <li>User sessions and page views.</li>
+        <li>Custom events and custom metrics.</li>
+        <li>Live application metrics.</li>
+    </ul>
+
+    <p><strong>ASP.NET Core Configuration</strong></p>
+
+    <pre><code class="language-csharp">
+builder.Services.AddApplicationInsightsTelemetry();
+    </code></pre>
+
+    <p><strong>Custom Telemetry Example</strong></p>
+
+    <pre><code class="language-csharp">
+public class OrderService
+{
+    private readonly TelemetryClient _telemetry;
+
+    public OrderService(TelemetryClient telemetry)
+    {
+        _telemetry = telemetry;
+    }
+
+    public void PlaceOrder()
+    {
+        _telemetry.TrackEvent("Order Created");
+    }
+}
+    </code></pre>
+
+    <p><strong>Advantages</strong></p>
+
+    <ul>
+        <li>Real-time application monitoring.</li>
+        <li>Automatic exception tracking.</li>
+        <li>Dependency performance monitoring.</li>
+        <li>Centralized logging and diagnostics.</li>
+        <li>Powerful analytics using Kusto Query Language (KQL).</li>
+        <li>Supports alerts and dashboards.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        Suppose users report that the <strong>Place Order</strong> page is slow.
+        Application Insights can show request duration, SQL query execution time,
+        external API latency, and exceptions, helping identify whether the issue
+        is in the application, database, or an external dependency.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Application Insights is Azure's Application Performance Monitoring (APM)
+        service that automatically collects telemetry such as requests,
+        exceptions, dependencies, and performance metrics, helping developers
+        monitor, diagnose, and troubleshoot applications in real time.
     </div>
     `
 },

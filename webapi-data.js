@@ -1043,4 +1043,99 @@ return Ok(order);
     </div>
     `
 },
+"What is API Versioning?": {
+    "answer": `
+    <p>
+        <strong>API Versioning</strong> is the practice of maintaining multiple
+        versions of an API so that existing clients continue to work while new
+        features or changes are introduced without breaking backward compatibility.
+    </p>
+
+    <p>
+        Instead of modifying an existing API that clients already use, a new
+        version of the API is created. This allows old and new clients to
+        coexist during the migration period.
+    </p>
+
+    <p><strong>API Versioning Flow</strong></p>
+
+    <pre><code class="language-text">
+                Client
+                   │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+     API v1               API v2
+        │                     │
+        ▼                     ▼
+   Old Features        New Features
+        │                     │
+        └──────────┬──────────┘
+                   ▼
+                Database
+    </code></pre>
+
+    <p><strong>Types of API Versioning</strong></p>
+
+    <ul>
+        <li><strong>URL Versioning</strong> - /api/v1/products</li>
+        <li><strong>Query String Versioning</strong> - /api/products?version=1.0</li>
+        <li><strong>Header Versioning</strong> - api-version: 1.0</li>
+        <li><strong>Media Type Versioning</strong> - Accept: application/json;version=1.0</li>
+    </ul>
+
+    <p><strong>ASP.NET Core Example (URL Versioning)</strong></p>
+
+    <pre><code class="language-csharp">
+[ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/products")]
+public class ProductsController : ControllerBase
+{
+    [HttpGet]
+    public IActionResult Get()
+    {
+        return Ok("Products API V1");
+    }
+}
+    </code></pre>
+
+    <p><strong>Advantages</strong></p>
+
+    <ul>
+        <li>Maintains backward compatibility.</li>
+        <li>Allows gradual migration to newer APIs.</li>
+        <li>Prevents breaking existing client applications.</li>
+        <li>Supports multiple API versions simultaneously.</li>
+        <li>Enables independent evolution of APIs.</li>
+    </ul>
+
+    <p><strong>Best Practices</strong></p>
+
+    <ul>
+        <li>Prefer URL versioning for public APIs because it is simple and explicit.</li>
+        <li>Avoid changing or removing existing endpoints.</li>
+        <li>Deprecate old API versions gradually.</li>
+        <li>Document each API version clearly.</li>
+        <li>Maintain backward compatibility whenever possible.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        A mobile application uses <strong>API v1</strong>. Later, new business
+        requirements require additional fields and functionality. Instead of
+        modifying v1, a new <strong>API v2</strong> is released. Existing mobile
+        users continue using v1, while new applications consume v2 until v1 is
+        eventually retired.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        API Versioning allows multiple versions of an API to coexist, ensuring
+        backward compatibility while enabling new features without breaking
+        existing client applications.
+    </div>
+    `
+},
 };

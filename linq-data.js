@@ -245,5 +245,311 @@ public class Employee
     </div>
     `
 },
+"What is deferred execution in LINQ?": {
+    "answer": `
+    <p>
+        <strong>Deferred Execution</strong> is a feature of LINQ where a query is
+        <strong>not executed when it is defined</strong>. Instead, it executes
+        only when the results are actually enumerated, such as by using
+        <strong>foreach</strong>, <strong>ToList()</strong>,
+        <strong>First()</strong>, <strong>Count()</strong>, or similar methods.
+    </p>
 
+    <p>
+        This means that if the underlying data source changes before the query
+        is executed, the query returns the latest data. Also, every time the
+        query is enumerated, it executes again unless the results have been
+        materialized using methods like <strong>ToList()</strong> or
+        <strong>ToArray()</strong>.
+    </p>
+
+    <p><strong>Execution Flow</strong></p>
+
+    <pre><code class="language-text">
+Create LINQ Query
+        │
+        ▼
+No Execution Yet
+        │
+        ▼
+Source Data Changes
+        │
+        ▼
+foreach / ToList() / First()
+        │
+        ▼
+Query Executes
+        │
+        ▼
+Latest Data Returned
+    </code></pre>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-csharp">
+var nums = new List&lt;int&gt; { 1, 2, 3 };
+
+var query = nums.Where(n => n > 1);
+// Query is NOT executed here
+
+nums.Add(4);
+
+foreach (var n in query)
+{
+    Console.Write(n + " ");
+}
+
+// Output:
+// 2 3 4
+    </code></pre>
+
+    <p><strong>Immediate Execution</strong></p>
+
+    <pre><code class="language-csharp">
+var nums = new List&lt;int&gt; { 1, 2, 3 };
+
+var result = nums
+    .Where(n => n > 1)
+    .ToList();      // Executes immediately
+
+nums.Add(4);
+
+foreach (var n in result)
+{
+    Console.Write(n + " ");
+}
+
+// Output:
+// 2 3
+    </code></pre>
+
+    <p><strong>Benefits</strong></p>
+
+    <ul>
+        <li>Improves performance by delaying execution until needed.</li>
+        <li>Always retrieves the latest data from the source.</li>
+        <li>Avoids unnecessary query execution.</li>
+        <li>Supports query composition.</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Deferred execution means a LINQ query is executed only when its results
+        are enumerated. If the source data changes before execution, the query
+        returns the updated data. Methods like <strong>ToList()</strong> and
+        <strong>ToArray()</strong> force immediate execution.
+    </div>
+    `
+},
+"Why is Count() == 0 worse than Any() on an IEnumerable?": {
+    "answer": `
+    <p>
+        When working with an <strong>IEnumerable</strong>, using
+        <strong>Any()</strong> is generally more efficient than using
+        <strong>Count() > 0</strong> to check whether a collection contains
+        elements.
+    </p>
+
+    <p>
+        <strong>Any()</strong> stops as soon as it finds the first element,
+        whereas <strong>Count()</strong> must iterate through the entire
+        collection to determine the total number of elements.
+    </p>
+
+    <p><strong>Execution Flow</strong></p>
+
+    <pre><code class="language-text">
+IEnumerable
+      │
+      ├── Any()
+      │      │
+      │      ▼
+      │ Stops at First Element ✔
+      │
+      └── Count()
+             │
+             ▼
+      Scans Entire Collection ❌
+    </code></pre>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-csharp">
+var items = GetMillionItems();
+
+// Slow
+bool hasItems1 = items.Count() > 0;
+
+// Fast
+bool hasItems2 = items.Any();
+    </code></pre>
+
+    <p><strong>Time Complexity</strong></p>
+
+    <ul>
+        <li><strong>Any()</strong> - O(1) in most cases because it stops after finding the first element.</li>
+        <li><strong>Count()</strong> - O(n) for IEnumerable because it traverses the entire sequence.</li>
+    </ul>
+
+    <p><strong>Exception</strong></p>
+
+    <p>
+        For collections such as <strong>List&lt;T&gt;</strong> and arrays,
+        <strong>Count</strong> and <strong>Length</strong> are properties,
+        not LINQ methods. They return the value in <strong>O(1)</strong> time.
+    </p>
+
+    <pre><code class="language-csharp">
+List&lt;int&gt; numbers = new List&lt;int&gt;();
+
+if (numbers.Count > 0)
+{
+    Console.WriteLine("Has Items");
+}
+    </code></pre>
+
+    <p><strong>Best Practices</strong></p>
+
+    <ul>
+        <li>Use <strong>Any()</strong> when checking if an IEnumerable contains data.</li>
+        <li>Use <strong>Count()</strong> only when you actually need the total number of elements.</li>
+        <li>For List&lt;T&gt; and arrays, use the <strong>Count</strong> or <strong>Length</strong> property.</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        For an <strong>IEnumerable</strong>, <strong>Any()</strong> is preferred
+        over <strong>Count() > 0</strong> because it stops after finding the first
+        element, whereas <strong>Count()</strong> traverses the entire sequence.
+        The exception is collections like <strong>List&lt;T&gt;</strong> and arrays,
+        where <strong>Count</strong> and <strong>Length</strong> are O(1) properties.
+    </div>
+    `
+},
+"Difference between IEnumerable and IList": {
+    "answer": `
+    <p>
+        <strong>IEnumerable</strong> and <strong>IList</strong> are collection
+        interfaces in .NET, but they serve different purposes.
+    </p>
+
+    <p>
+        <strong>IEnumerable</strong> is used for reading and iterating over a
+        collection sequentially, whereas <strong>IList</strong> represents an
+        ordered collection that supports indexing, adding, removing, and updating
+        elements.
+    </p>
+
+    <p><strong>Execution Flow</strong></p>
+
+    <pre><code class="language-text">
+IEnumerable
+      │
+      ▼
+Read Only
+      │
+foreach
+      │
+Sequential Access
+
+
+IList
+      │
+      ▼
+Read + Write
+      │
+Index Based Access
+      │
+Add / Remove / Update
+    </code></pre>
+
+    <p><strong>IEnumerable Example</strong></p>
+
+    <pre><code class="language-csharp">
+IEnumerable&lt;string&gt; names =
+    new List&lt;string&gt;
+{
+    "John",
+    "Peter",
+    "David"
+};
+
+foreach (var name in names)
+{
+    Console.WriteLine(name);
+}
+    </code></pre>
+
+    <p><strong>IList Example</strong></p>
+
+    <pre><code class="language-csharp">
+IList&lt;string&gt; names =
+    new List&lt;string&gt;();
+
+names.Add("John");
+names.Add("Peter");
+
+names[1] = "David";
+
+names.Remove("John");
+    </code></pre>
+
+    <p><strong>Key Differences</strong></p>
+
+    <ul>
+        <li><strong>IEnumerable</strong> supports only forward iteration using <strong>foreach</strong>.</li>
+        <li><strong>IList</strong> supports indexing (<strong>[]</strong>) and modification of data.</li>
+        <li><strong>IEnumerable</strong> is read-only from the consumer's perspective.</li>
+        <li><strong>IList</strong> supports Add(), Remove(), Insert(), Update(), and Count.</li>
+        <li><strong>IList</strong> inherits from <strong>ICollection</strong>, which in turn inherits from <strong>IEnumerable</strong>.</li>
+    </ul>
+
+    <p><strong>When to Use</strong></p>
+
+    <ul>
+        <li>Use <strong>IEnumerable</strong> when you only need to read or iterate through data.</li>
+        <li>Use <strong>IList</strong> when you need random access or to modify the collection.</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        IEnumerable is used for read-only sequential iteration, whereas IList
+        supports both reading and modifying a collection with index-based access.
+    </div>
+    `
+},
+"IEnumerable and IQueryable in C#?": {
+    "answer": `
+    <p>
+        Both <code>IEnumerable</code> and <code>IQueryable</code> are used to query collections,
+        but they differ in where the query is executed.
+    </p>
+
+    <p>
+        <code>IEnumerable</code> executes the query in memory after the data has been
+        loaded from the database. <code>IQueryable</code> builds the query and executes
+        it on the database server, fetching only the required data.
+    </p>
+
+    <p><strong>Key Differences:</strong></p>
+
+    <ul>
+        <li><strong>IEnumerable</strong> → Executes query in memory.</li>
+        <li><strong>IQueryable</strong> → Executes query on the database.</li>
+        <li><strong>IEnumerable</strong> → Suitable for in-memory collections.</li>
+        <li><strong>IQueryable</strong> → Suitable for Entity Framework and LINQ to SQL.</li>
+        <li><strong>IEnumerable</strong> → Retrieves all records before filtering.</li>
+        <li><strong>IQueryable</strong> → Retrieves only filtered records from the database.</li>
+    </ul>
+
+    <div class="interview-answer">
+        <strong>Interview One-Liner:</strong>
+        <code>IEnumerable</code> performs filtering in memory, whereas
+        <code>IQueryable</code> performs filtering at the database level, making it more efficient for large datasets.
+    </div>
+    `
+},
 };
