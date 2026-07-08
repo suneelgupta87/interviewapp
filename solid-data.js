@@ -868,13 +868,20 @@ Infrastructure Layer
     <pre><code class="language-csharp">
 public sealed class Logger
 {
-    private static readonly Lazy&lt;Logger&gt; _instance =
-        new Lazy&lt;Logger&gt;(() => new Logger());
-
-    public static Logger Instance => _instance.Value;
+    private static Logger _instance;
 
     private Logger()
     {
+    }
+
+    public static Logger GetInstance()
+    {
+        if (_instance == null)
+        {
+            _instance = new Logger();
+        }
+
+        return _instance;
     }
 
     public void Log(string message)
@@ -882,15 +889,9 @@ public sealed class Logger
         Console.WriteLine(message);
     }
 }
+    <p>Usage:</p>
+    Logger logger1 = Logger.GetInstance();
     </code></pre>
-
-    <p><strong>Usage</strong></p>
-
-    <pre><code class="language-csharp">
-Logger.Instance.Log("Application Started");
-Logger.Instance.Log("User Logged In");
-    </code></pre>
-
     <p><strong>Real-Time Example:</strong></p>
 
     <p>

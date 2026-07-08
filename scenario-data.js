@@ -232,6 +232,14 @@ Verify Performance
         framework migration, third-party API integration, production support,
         and application deployment.
     </div>
+
+    <div>
+    "I'm a Lead Backend Engineer with over 12 years of experience, specializing in .NET Core, 
+    Web API, C#, SQL Server, and Angular. I've worked across financial services and travel domains, 
+    leading end-to-end development of large-scale enterprise systems. Currently,
+     I'm working at Coforge on a Retirement Benefit Payment System for SEI Investments, 
+     a US-based financial services client."
+    </div>
     `
 },
 };

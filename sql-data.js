@@ -1605,4 +1605,657 @@ Interlocked.Increment(ref Count);
     </div>
     `
 },
+"What is Normalization in SQL?": {
+    "answer": `
+    <p>
+        <strong>Normalization</strong> is the process of organizing data in a
+        database to reduce redundancy and improve data integrity. It involves
+        dividing large tables into smaller related tables and establishing
+        relationships between them.
+    </p>
+
+    <p>
+        The main goals of normalization are to eliminate duplicate data, avoid
+        update anomalies, and maintain consistent and efficient database design.
+    </p>
+
+    <p><strong>Normalization Process</strong></p>
+
+    <pre><code class="language-text">
+Large Table
+     │
+     ▼
+Remove Duplicate Data
+     │
+     ▼
+Split into Related Tables
+     │
+     ▼
+Create Primary & Foreign Keys
+     │
+     ▼
+Normalized Database
+    </code></pre>
+
+    <p><strong>Normal Forms</strong></p>
+
+    <ul>
+        <li><strong>1NF (First Normal Form)</strong> - Remove repeating groups and ensure each column contains atomic values.</li>
+        <li><strong>2NF (Second Normal Form)</strong> - Remove partial dependency by ensuring all non-key columns depend on the entire primary key.</li>
+        <li><strong>3NF (Third Normal Form)</strong> - Remove transitive dependency so non-key columns depend only on the primary key.</li>
+        <li><strong>BCNF (Boyce-Codd Normal Form)</strong> - A stricter version of 3NF that removes remaining dependency anomalies.</li>
+    </ul>
+
+    <p><strong>Example</strong></p>
+
+    <p><strong>Before Normalization</strong></p>
+
+    <pre><code class="language-text">
+OrderId | CustomerName | CustomerCity | Product
+------------------------------------------------
+1       | John         | Delhi        | Laptop
+2       | John         | Delhi        | Mouse
+    </code></pre>
+
+    <p><strong>After Normalization</strong></p>
+
+    <pre><code class="language-text">
+Customers
+-------------------------
+CustomerId | Name | City
+
+Orders
+-------------------------
+OrderId | CustomerId
+
+OrderItems
+-------------------------
+OrderId | Product
+    </code></pre>
+
+    <p><strong>Advantages</strong></p>
+
+    <ul>
+        <li>Reduces data redundancy.</li>
+        <li>Improves data consistency.</li>
+        <li>Eliminates insert, update, and delete anomalies.</li>
+        <li>Reduces storage requirements.</li>
+        <li>Makes database maintenance easier.</li>
+    </ul>
+
+    <p><strong>Disadvantages</strong></p>
+
+    <ul>
+        <li>Requires more table joins.</li>
+        <li>Can impact query performance for complex reports.</li>
+        <li>Database design becomes more complex.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an e-commerce application, customer information is stored in a
+        <strong>Customers</strong> table, order information in an
+        <strong>Orders</strong> table, and product details in an
+        <strong>Products</strong> table. This avoids storing the same customer
+        information with every order and keeps the data consistent.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Normalization is the process of organizing database tables to minimize
+        data redundancy and improve data integrity by dividing data into related
+        tables and establishing relationships using primary and foreign keys.
+    </div>
+    `
+},
+ "Slow Query Optimization": {
+    "answer": `
+    <ul>
+    <li>Use <code>SET NOCOUNT ON</code>.</li>
+    <li>Always use the schema name before database objects (e.g., <code>dbo.Employee</code>).</li>
+    <li>Use <code>EXISTS()</code> instead of <code>COUNT()</code> when checking for the existence of records.</li>
+    <li>Avoid using functions in the <code>WHERE</code> clause, as they can prevent index usage.</li>
+    <li>Use <code>WITH (NOLOCK)</code> carefully to reduce blocking, keeping in mind it may return dirty reads.</li>
+    <li>Avoid using temporary tables unless they are necessary.</li>
+    <li>Create appropriate indexes to improve query performance.</li>
+    <li>Prefer <code>JOIN</code> over subqueries and correlated subqueries whenever possible.</li>
+    <li>Use <code>IF EXISTS (SELECT 1 ...)</code> instead of retrieving unnecessary data.</li>
+    <li>Avoid naming user-defined stored procedures with the <code>sp_</code> prefix (e.g., <code>sp_ProcedureName</code>), as it is reserved for system stored procedures.</li>
+</ul>
+    `
+ },
+ "What are SQL Constraints?": {
+    "answer": `
+    <p>
+        <strong>SQL Constraints</strong> are rules applied to table columns to
+        enforce data integrity and ensure that only valid and consistent data is
+        stored in the database.
+    </p>
+
+    <p>
+        Constraints help maintain the accuracy, reliability, and consistency of
+        data by restricting the type of values that can be inserted, updated, or
+        deleted.
+    </p>
+
+    <p><strong>Types of SQL Constraints</strong></p>
+
+    <pre><code class="language-text">
+SQL Constraints
+      │
+      ├── PRIMARY KEY
+      ├── FOREIGN KEY
+      ├── UNIQUE
+      ├── NOT NULL
+      ├── CHECK
+      └── DEFAULT
+    </code></pre>
+
+    <p><strong>1. PRIMARY KEY</strong></p>
+
+    <ul>
+        <li>Uniquely identifies each record in a table.</li>
+        <li>Does not allow NULL values.</li>
+        <li>Only one Primary Key is allowed per table (it can be composite).</li>
+    </ul>
+
+    <pre><code class="language-sql">
+CREATE TABLE Employee
+(
+    EmployeeId INT PRIMARY KEY,
+    Name VARCHAR(100)
+);
+    </code></pre>
+
+    <p><strong>2. FOREIGN KEY</strong></p>
+
+    <ul>
+        <li>Creates a relationship between two tables.</li>
+        <li>Maintains referential integrity.</li>
+        <li>Prevents invalid parent-child relationships.</li>
+    </ul>
+
+    <pre><code class="language-sql">
+CREATE TABLE Orders
+(
+    OrderId INT PRIMARY KEY,
+    CustomerId INT,
+    FOREIGN KEY (CustomerId)
+    REFERENCES Customers(CustomerId)
+);
+    </code></pre>
+
+    <p><strong>3. UNIQUE</strong></p>
+
+    <ul>
+        <li>Ensures all values in a column are unique.</li>
+        <li>Unlike a Primary Key, SQL Server allows one NULL value.</li>
+    </ul>
+
+    <pre><code class="language-sql">
+Email VARCHAR(100) UNIQUE
+    </code></pre>
+
+    <p><strong>4. NOT NULL</strong></p>
+
+    <ul>
+        <li>Prevents NULL values from being stored.</li>
+        <li>Makes the column mandatory.</li>
+    </ul>
+
+    <pre><code class="language-sql">
+Name VARCHAR(100) NOT NULL
+    </code></pre>
+
+    <p><strong>5. CHECK</strong></p>
+
+    <ul>
+        <li>Validates data based on a specified condition.</li>
+    </ul>
+
+    <pre><code class="language-sql">
+Age INT CHECK (Age >= 18)
+    </code></pre>
+
+    <p><strong>6. DEFAULT</strong></p>
+
+    <ul>
+        <li>Assigns a default value when no value is provided.</li>
+    </ul>
+
+    <pre><code class="language-sql">
+CreatedDate DATETIME
+DEFAULT GETDATE()
+    </code></pre>
+
+    <p><strong>Advantages</strong></p>
+
+    <ul>
+        <li>Maintains data integrity.</li>
+        <li>Prevents invalid data.</li>
+        <li>Enforces business rules at the database level.</li>
+        <li>Improves data consistency.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an e-commerce application, the <strong>Customers</strong> table has
+        <strong>CustomerId</strong> as the Primary Key, the
+        <strong>Orders</strong> table references it using a Foreign Key,
+        <strong>Email</strong> is marked as UNIQUE, <strong>Name</strong> is
+        NOT NULL, <strong>Age</strong> is validated using a CHECK constraint,
+        and <strong>CreatedDate</strong> is automatically populated using a
+        DEFAULT constraint.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        SQL Constraints are rules that enforce data integrity by restricting
+        the type and validity of data stored in database tables. Common
+        constraints include PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL, CHECK,
+        and DEFAULT.
+    </div>
+    `
+},
+"Explain ACID Properties in SQL": {
+    "answer": `
+    <p>
+        <strong>ACID</strong> is a set of four properties that ensure database
+        transactions are processed reliably and maintain data integrity, even
+        in the event of failures such as power outages, application crashes, or
+        concurrent access.
+    </p>
+
+    <p><strong>ACID Properties</strong></p>
+
+    <pre><code class="language-text">
+ACID
+ │
+ ├── A → Atomicity
+ ├── C → Consistency
+ ├── I → Isolation
+ └── D → Durability
+    </code></pre>
+
+    <p><strong>1. Atomicity</strong></p>
+
+    <ul>
+        <li>A transaction is treated as a single unit of work.</li>
+        <li>Either all operations succeed or all are rolled back.</li>
+        <li>No partial updates are allowed.</li>
+    </ul>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-sql">
+BEGIN TRANSACTION
+
+UPDATE Accounts
+SET Balance = Balance - 1000
+WHERE Id = 1;
+
+UPDATE Accounts
+SET Balance = Balance + 1000
+WHERE Id = 2;
+
+COMMIT;
+    </code></pre>
+
+    <p>
+        If the second update fails, SQL Server rolls back the first update,
+        ensuring that money is not deducted from one account without being
+        credited to the other.
+    </p>
+
+    <p><strong>2. Consistency</strong></p>
+
+    <ul>
+        <li>A transaction moves the database from one valid state to another.</li>
+        <li>All constraints, rules, and relationships remain valid.</li>
+    </ul>
+
+    <p><strong>Example</strong></p>
+
+    <p>
+        A FOREIGN KEY constraint prevents inserting an order for a customer
+        that does not exist, keeping the database consistent.
+    </p>
+
+    <p><strong>3. Isolation</strong></p>
+
+    <ul>
+        <li>Multiple transactions execute independently without interfering with each other.</li>
+        <li>Prevents issues such as dirty reads, non-repeatable reads, and phantom reads.</li>
+    </ul>
+
+    <p><strong>Example</strong></p>
+
+    <p>
+        If two users update the same bank account simultaneously, SQL Server
+        ensures each transaction is isolated until it is completed.
+    </p>
+
+    <p><strong>4. Durability</strong></p>
+
+    <ul>
+        <li>Once a transaction is committed, the changes are permanently saved.</li>
+        <li>The committed data survives system failures or server restarts.</li>
+    </ul>
+
+    <p><strong>Real-Time Banking Example</strong></p>
+
+    <pre><code class="language-text">
+Transfer ₹1000
+
+Atomicity
+    │
+All debit & credit succeed together
+
+Consistency
+    │
+Total money remains correct
+
+Isolation
+    │
+Other users cannot see partial updates
+
+Durability
+    │
+Committed transaction survives power failure
+    </code></pre>
+
+    <p><strong>Advantages</strong></p>
+
+    <ul>
+        <li>Maintains data integrity.</li>
+        <li>Ensures reliable transactions.</li>
+        <li>Prevents inconsistent data.</li>
+        <li>Supports concurrent users safely.</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        ACID stands for Atomicity, Consistency, Isolation, and Durability. These
+        four properties ensure that database transactions are reliable, maintain
+        data integrity, and remain consistent even in the presence of failures
+        or concurrent access.
+    </div>
+    `
+},
+
+"What is cursor?":{
+    "answer":`
+    <p>
+        A <strong>Cursor</strong> is a database object that allows you to
+        retrieve and manipulate data row by row from a result set. It provides
+        a mechanism to iterate through the rows of a query result, enabling
+        complex processing that cannot be achieved with standard SQL statements.
+    </p>
+    <pre><code class="language-sql">
+DECLARE @EmpId INT;
+
+DECLARE EmpCursor CURSOR FOR
+SELECT EmployeeId
+FROM Employee;
+
+OPEN EmpCursor;
+
+FETCH NEXT FROM EmpCursor INTO @EmpId;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    UPDATE Employee
+    SET Salary = Salary * 1.10
+    WHERE EmployeeId = @EmpId;
+
+    FETCH NEXT FROM EmpCursor INTO @EmpId;
+END
+
+CLOSE EmpCursor;
+DEALLOCATE EmpCursor;
+</code></pre>
+    `
+},
+"A query was working perfectly yesterday.suddenly became very slow.?":{
+"answer":`
+<p><strong>Possible reasons</strong></p>
+
+<ul>
+    <li>Statistics outdated</li>
+    <li>Parameter Sniffing</li>
+    <li>Index Fragmentation</li>
+    <li>Blocking</li>
+    <li>TempDB issue</li>
+    <li>Execution plan changed</li>
+<li>Server memory pressure</li>
+</ul>
+
+`
+},
+"Difference between WHERE and HAVING": {
+    "answer": `
+    <p>
+        Consider an <strong>Employee</strong> table where the HR team wants to find
+        departments having more than <strong>5 employees</strong> earning a salary
+        greater than <strong>50000</strong>.
+    </p>
+
+    <p><strong>Difference</strong></p>
+
+    <ul>
+        <li><strong>WHERE</strong> filters individual rows <strong>before</strong> GROUP BY.</li>
+        <li><strong>HAVING</strong> filters grouped records <strong>after</strong> GROUP BY.</li>
+    </ul>
+
+    <p><strong>Example</strong></p>
+
+    <pre><code class="language-sql">
+SELECT Department,
+       COUNT(*) AS TotalEmployees
+FROM Employees
+WHERE Salary > 50000
+GROUP BY Department
+HAVING COUNT(*) > 5;
+    </code></pre>
+
+    <p><strong>Execution Order</strong></p>
+
+    <pre><code class="language-text">
+FROM
+   ↓
+WHERE
+   ↓
+GROUP BY
+   ↓
+HAVING
+   ↓
+SELECT
+   ↓
+ORDER BY
+    </code></pre>
+
+    <div class="interview-answer">
+        <strong>Interview One-Liner:</strong><br>
+        WHERE filters rows before grouping, whereas HAVING filters groups after GROUP BY and is mainly used with aggregate functions.
+    </div>
+    `
+},
+"Find Top 3 Customers by Total Amount Spent": {
+    "answer": `
+    <p>
+        Consider a scenario where the <strong>Marketing Team</strong> wants to identify
+        the <strong>top 3 customers</strong> who have spent the highest total amount
+        across all their orders.
+    </p>
+
+    <p><strong>SQL Query</strong></p>
+
+    <pre><code class="language-sql">
+SELECT
+    c.customer_id,
+    c.customer_name,
+    SUM(o.amount) AS total_spent
+FROM Customers c
+INNER JOIN Orders o
+    ON c.customer_id = o.customer_id
+GROUP BY
+    c.customer_id,
+    c.customer_name
+ORDER BY
+    total_spent DESC
+LIMIT 3;
+    </code></pre>
+
+    <p><strong>Sample Output</strong></p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Customer ID</th>
+            <th>Customer Name</th>
+            <th>Total Spent</th>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Alice</td>
+            <td>12500</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>David</td>
+            <td>9800</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>John</td>
+            <td>7500</td>
+        </tr>
+    </table>
+
+    <p><strong>Explanation</strong></p>
+
+    <ul>
+        <li>Join <strong>Customers</strong> and <strong>Orders</strong> tables.</li>
+        <li>Calculate total amount spent using <code>SUM()</code>.</li>
+        <li>Group records by customer.</li>
+        <li>Sort the result in descending order.</li>
+        <li>Return only the top 3 customers.</li>
+    </ul>
+
+    <div class="interview-answer">
+        <strong>Interview One-Liner:</strong><br>
+        Use <code>GROUP BY</code> with <code>SUM()</code> to calculate total spending,
+        <code>ORDER BY DESC</code> to sort by highest spending, and
+        <code>TOP/LIMIT</code> to return the top N customers.
+    </div>
+    `
+},
+"Find Customers Who Have Not Placed Any Orders": {
+    "answer": `
+    <p>
+        Consider a scenario where the <strong>Support Team</strong> wants to find
+        customers who have <strong>never placed an order</strong>.
+    </p>
+
+    <p><strong>SQL Query</strong></p>
+
+    <pre><code class="language-sql">
+SELECT
+    c.customer_id,
+    c.customer_name,
+    c.email
+FROM Customers c
+LEFT JOIN Orders o
+    ON c.customer_id = o.customer_id
+WHERE o.order_id IS NULL;
+    </code></pre>
+
+    <p><strong>Sample Output</strong></p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Customer ID</th>
+            <th>Customer Name</th>
+            <th>Email</th>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Charlie</td>
+            <td>charlie@example.com</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Eve</td>
+            <td>eve@example.com</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Frank</td>
+            <td>frank@example.com</td>
+        </tr>
+    </table>
+
+    <p><strong>Explanation</strong></p>
+
+    <ul>
+        <li><code>LEFT JOIN</code> returns all customers.</li>
+        <li>If a customer has no matching order, the order columns become <code>NULL</code>.</li>
+        <li>Filter those records using <code>WHERE o.order_id IS NULL</code>.</li>
+    </ul>
+
+    <p><strong>Alternative Solution (NOT EXISTS)</strong></p>
+
+    <pre><code class="language-sql">
+SELECT
+    customer_id,
+    customer_name,
+    email
+FROM Customers c
+WHERE NOT EXISTS
+(
+    SELECT 1
+    FROM Orders o
+    WHERE o.customer_id = c.customer_id
+);
+    </code></pre>
+
+    <div class="interview-answer">
+        <strong>Interview One-Liner:</strong><br>
+        Use a <code>LEFT JOIN</code> and filter rows where the joined table's primary key is
+        <code>NULL</code>, or use <code>NOT EXISTS</code>, which is often preferred for better performance on large datasets.
+    </div>
+    `
+},
+"Departmentwise 2nd Highest Salary": {
+    "answer": `
+    <p>
+    <pre><code class="language-sql">
+<strong> Option:1</strong>
+select DepartmentId, Max(Salary) Salary 	   
+from employee e1
+where salary < (
+                select max(salary) 
+                from employee e2
+                where e2.DepartmentId =e1.DepartmentId
+                )
+group by DepartmentId
+
+<strong> Option:2</strong>
+with SalaryCTE as (
+    SELECT
+        DepartmentId,
+        Salary,
+        DENSE_RANK() OVER (PARTITION BY DepartmentId ORDER BY Salary DESC) AS SalaryRank
+    FROM employee
+)
+select  DepartmentId, Salary from SalaryCTE where SalaryRank = 2
+    </code></pre>   
+    </p>
+    `
+},
+
 };

@@ -475,7 +475,54 @@ Ideal for business workflows	Ideal for event-driven processing
         request transformation, analytics, and API versioning without changing the
         backend code.
     </p>
+    <p><strong>Complete Flow</strong></p>
+<pre><code class="language-text">
+User
 
+↓
+
+Azure Front Door
+
+↓
+
+Azure API Management
+
+↓
+
+Validate JWT
+
+↓
+
+Check Rate Limit
+
+↓
+
+Check Headers
+
+↓
+
+Routing Rule
+
+↓
+
+Product Service
+
+↓
+
+Database
+
+↓
+
+Response
+
+↓
+
+APIM
+
+↓
+
+Angular
+</pre></code>
     <p><strong>Common Use Cases:</strong></p>
 
     <ul>
@@ -486,16 +533,7 @@ Ideal for business workflows	Ideal for event-driven processing
         <li>Managing multiple versions of APIs.</li>
         <li>Providing a single gateway for multiple backend services and microservices.</li>
     </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        Azure API Management is a fully managed API gateway that helps publish,
-        secure, monitor, and manage APIs from a centralized platform.
-    </div>
-    <strong>Scenario:</strong>    
-<p>Consider a mobile client who needs to display work items from different projects, each project has different API end point. To display all the work items to the mobile client, we need to make two calls simultaneously and display the data.</p>
-<p>The time response of each API at that time depends on the network availability, if it is having more API's in that page it takes more time and impacts application performance. If we use API Management we can get all the API responses on a single call. Although API Manager internally calls all the APIs required for a mobile page, the response time is less because the API resource is in the cloud with high bandwidth and gets the response fast. That improves the total time to load the page in mobile.</p> 
-    `
+   `
 },
 
 "What is Azure Blob Storage?": {

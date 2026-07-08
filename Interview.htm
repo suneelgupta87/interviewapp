@@ -31,7 +31,7 @@ body{
         } */
 
         p{
-            font-size:16px;
+            font-size:18px;
             line-height:1.8;
             color:#333;
         }
@@ -42,7 +42,7 @@ body{
 
         li{
             margin-bottom:12px;
-            font-size:16px;
+            font-size:18px;
         }
 
         code{
@@ -183,13 +183,27 @@ border-radius:5px;
 }
 
 .toolbar{
+display:flex;
+align-items:center;
+flex-wrap:wrap;
+gap:8px;
 margin-bottom:20px;
 }
 
 .toolbar button{
 padding:10px;
-margin-right:10px;
 cursor:pointer;
+}
+
+.clear-search-btn{
+background:#6b7280;
+color:white;
+border:none;
+border-radius:5px;
+}
+
+.clear-search-btn:hover{
+background:#4b5563;
 }
 
 .modal{
@@ -366,6 +380,7 @@ flex:1;
 <div class="toolbar">
 <!-- <button onclick="toggleDarkMode()"> Dark Mode </button> -->
 <button onclick="randomQuestion()"> Interview Mode</button>
+<button class="clear-search-btn" onclick="clearSearch()" type="button">Clear Search</button>
 <!-- <a href="manage-data.html" target="_blank" style="text-decoration:none;">
 <button type="button">Manage Data</button>
 </a> -->
@@ -486,6 +501,7 @@ document.body.classList.add('sidebar-collapsed');
 }
 
 function selectTopic(topic){
+clearSearchInput();
 loadTopic(topic);
 }
 
@@ -579,6 +595,23 @@ ${q}
 
 document.getElementById("questions").innerHTML=
 html;
+}
+
+function clearSearchInput(){
+const searchBox=document.getElementById("search");
+if(searchBox){
+  searchBox.value="";
+}
+}
+
+function clearSearch(){
+clearSearchInput();
+
+if(currentTopic){
+  loadTopic(currentTopic);
+} else {
+  loadTopic('csharp');
+}
 }
 
 function toggleDarkMode(){

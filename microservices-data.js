@@ -251,9 +251,9 @@ Policy
 "What is Service Discovery in Microservices?": {
     "answer": `
     <p>
-        <strong>Service Discovery</strong> is a mechanism that enables
-        microservices to automatically locate and communicate with each other
-        without hardcoding IP addresses or URLs.
+         <strong>Service Discovery</strong>  is a mechanism that enables one microservice to find the network location (IP address and port) of another microservice dynamically.
+</br>
+Instead of hardcoding URLs, services register themselves with a Service Registry, and clients query the registry to locate the required service.
     </p>
 
     <p>
@@ -382,72 +382,7 @@ Payment Service
     </div>
     `
 },
-"What is an API Gateway in Microservices?": {
-    "answer": `
-    <p>
-        An <strong>API Gateway</strong> is a single entry point for all client
-        requests in a microservices architecture. Instead of clients calling
-        individual microservices directly, all requests pass through the API
-        Gateway, which routes them to the appropriate service.
-    </p>
 
-    <p>
-        The API Gateway also provides cross-cutting features such as
-        authentication, authorization, rate limiting, request routing,
-        caching, logging, and load balancing.
-    </p>
-
-    <p><strong>Responsibilities of an API Gateway:</strong></p>
-
-    <ul>
-        <li>Routes requests to the appropriate microservice.</li>
-        <li>Handles authentication and authorization.</li>
-        <li>Applies rate limiting and throttling.</li>
-        <li>Provides centralized logging and monitoring.</li>
-        <li>Aggregates responses from multiple services.</li>
-        <li>Performs load balancing and request transformation.</li>
-    </ul>
-
-    <p><strong>Architecture:</strong></p>
-
-    <pre><code class="language-text">
-             Client
-                │
-                ▼
-          API Gateway
-                │
-      ┌─────────┼─────────┐
-      ▼         ▼         ▼
- Order API  Payment API  Inventory API
-    </code></pre>
-
-    <p><strong>Real-Time Example:</strong></p>
-
-    <p>
-        In an e-commerce application, the Angular application sends all
-        requests to the API Gateway. The gateway authenticates the request,
-        applies rate limiting, and routes it to the appropriate service such
-        as Order, Payment, or Inventory. If the dashboard requires data from
-        multiple services, the gateway can aggregate the responses into a
-        single response for the client.
-    </p>
-
-    <p><strong>Common Use Cases:</strong></p>
-
-    <ul>
-        <li>Microservices architecture.</li>
-        <li>Azure API Management (APIM).</li>
-        <li>Ocelot API Gateway.</li>
-        <li>YARP (Yet Another Reverse Proxy).</li>
-        <li>Kubernetes Ingress.</li>
-    </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        An API Gateway is a single entry point that routes client requests to the appropriate microservices while providing centralized security, routing, rate limiting, caching, logging, and monitoring.
-    </div>
-    `
-},
 "Inventory has been deducted but Payment fails. What will you do?": {
     "answer": `
     <p>

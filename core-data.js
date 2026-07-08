@@ -212,15 +212,82 @@ Middleware is a component that runs in the HTTP request pipeline and can inspect
 
     <p><strong>Common Middleware:</strong></p>
 
-    <ul>
-        <li>Exception Handling</li>
-        <li>HTTPS Redirection</li>
-        <li>Static Files</li>
-        <li>Routing</li>
-        <li>Authentication</li>
-        <li>Authorization</li>
-        <li>Endpoint Mapping (Controllers)</li>
-    </ul>
+    <pre><code class="language-csharp">
+    Client (Browser/Postman/Angular)
+        │
+        ▼
+Kestrel Web Server
+        │
+        ▼
+Middleware Pipeline
+        │
+        ├── Exception Handling Middleware
+        │
+        ├── HTTPS Redirection
+        │
+        ├── Static Files Middleware
+        │
+        ├── Routing Middleware
+        │
+        ├── Authentication Middleware
+        │
+        ├── Authorization Middleware
+        │
+        ├── Custom Middleware (Logging, etc.)
+        │
+        └── Endpoint Middleware
+                │
+                ▼
+          MVC / Web API
+                │
+                ▼
+          Model Binding
+                │
+                ▼
+      Action Filters (Before)
+                │
+                ▼
+          Controller Action
+                │
+                ▼
+      Business Logic (Service Layer)
+                │
+                ▼
+          Repository Layer
+                │
+                ▼
+          Entity Framework / ADO.NET
+                │
+                ▼
+            SQL Server
+                │
+                ▲
+           Database Result
+                │
+                ▲
+      Repository Layer
+                │
+                ▲
+      Business Logic
+                │
+                ▲
+       Controller Action
+                │
+                ▲
+      Action Filters (After)
+                │
+                ▲
+     Result Filters (if applicable)
+                │
+                ▲
+        Response Serialization (JSON)
+                │
+                ▲
+       Middleware Pipeline (Reverse)
+                │
+                ▲
+Client (Browser/Angular/Postman)
+</code></pre>
 
     <div class="interview-answer">
         <strong>Interview One-Liner:</strong>
@@ -497,77 +564,7 @@ builder.Services.AddHttpClient();
 
     `
 },
-"What is Retry Policy and how do you implement it centrally in ASP.NET Core?": {
-    "answer": `
-    <p>
-        A <strong>Retry Policy</strong> is a resiliency mechanism that automatically
-        retries a failed operation before returning an error. It is commonly used
-        for temporary failures such as network issues, timeouts, or HTTP 5xx errors.
-    </p>
 
-    <p>
-        In ASP.NET Core, Retry Policies are typically implemented centrally using
-        <strong>IHttpClientFactory</strong> with <strong>Polly</strong>. This avoids
-        writing retry logic in every service and provides a single place to manage
-        retries.
-    </p>
-
-    <p><strong>Benefits:</strong></p>
-
-    <ul>
-        <li>Handles transient failures automatically.</li>
-        <li>Reduces duplicate retry code.</li>
-        <li>Centralized configuration.</li>
-        <li>Improves application reliability.</li>
-        <li>Easy integration with HttpClientFactory.</li>
-    </ul>
-
-    <p><strong>Real-Time Example:</strong></p>
-
-    <p>
-        Suppose an Order Service calls a Payment API. If the Payment API is
-        temporarily unavailable (HTTP 500 or Timeout), the Retry Policy
-        automatically retries the request before returning an error to the user.
-    </p>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        Retry Policy automatically retries failed requests caused by transient failures and is centrally implemented in ASP.NET Core using HttpClientFactory and Polly.
-    </div>
-<p>
-        A <strong>Retry Policy</strong> automatically retries failed requests caused
-        by transient failures such as network issues, timeouts, or HTTP 5xx errors.
-    </p>
-
-    <p><strong>Centralized Registration:</strong></p>
-
-    <pre><code class="language-csharp">
-builder.Services
-    .AddHttpClient&lt;IPaymentService, PaymentService&gt;()
-    .AddPolicyHandler(GetRetryPolicy());
-    </code></pre>
-
-    <p><strong>Retry Policy:</strong></p>
-
-    <pre><code class="language-csharp">
-private static IAsyncPolicy&lt;HttpResponseMessage&gt; GetRetryPolicy()
-{
-    return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .WaitAndRetryAsync(
-            3,
-            retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
-        );
-}
-    </code></pre>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        Retry Policy automatically retries transient failures and is commonly
-        configured centrally using HttpClientFactory and Polly.
-    </div>
-    `
-},
 "How do you enable Cross-Origin Requests (CORS) in ASP.NET Core?": {
     "answer": `
     <p>

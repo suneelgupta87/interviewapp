@@ -1138,4 +1138,441 @@ public class ProductsController : ControllerBase
     </div>
     `
 },
+"What is Retry Policy and how do you implement it centrally in ASP.NET Core?": {
+    "answer": `
+    <p>
+        A <strong>Retry Policy</strong> is a resiliency mechanism that automatically
+        retries a failed operation before returning an error. It is commonly used
+        for temporary failures such as network issues, timeouts, or HTTP 5xx errors.
+    </p>
+
+    <p>
+        In ASP.NET Core, Retry Policies are typically implemented centrally using
+        <strong>IHttpClientFactory</strong> with <strong>Polly</strong>. This avoids
+        writing retry logic in every service and provides a single place to manage
+        retries.
+    </p>
+
+    <p><strong>Benefits:</strong></p>
+
+    <ul>
+        <li>Handles transient failures automatically.</li>
+        <li>Reduces duplicate retry code.</li>
+        <li>Centralized configuration.</li>
+        <li>Improves application reliability.</li>
+        <li>Easy integration with HttpClientFactory.</li>
+    </ul>
+
+    <p><strong>Real-Time Example:</strong></p>
+
+    <p>
+        Suppose an Order Service calls a Payment API. If the Payment API is
+        temporarily unavailable (HTTP 500 or Timeout), the Retry Policy
+        automatically retries the request before returning an error to the user.
+    </p>
+
+    <div class="interview-answer">
+        <strong>Interview One-Liner:</strong>
+        Retry Policy automatically retries failed requests caused by transient failures and is centrally implemented in ASP.NET Core using HttpClientFactory and Polly.
+    </div>
+<p>
+        A <strong>Retry Policy</strong> automatically retries failed requests caused
+        by transient failures such as network issues, timeouts, or HTTP 5xx errors.
+    </p>
+
+    <p><strong>Centralized Registration:</strong></p>
+
+    <pre><code class="language-csharp">
+builder.Services
+    .AddHttpClient&lt;IPaymentService, PaymentService&gt;()
+    .AddPolicyHandler(GetRetryPolicy());
+    </code></pre>
+
+    <p><strong>Retry Policy:</strong></p>
+
+    <pre><code class="language-csharp">
+private static IAsyncPolicy&lt;HttpResponseMessage&gt; GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .WaitAndRetryAsync(
+            3,
+            retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+        );
+}
+    </code></pre>
+
+    <div class="interview-answer">
+        <strong>Interview One-Liner:</strong>
+        Retry Policy automatically retries transient failures and is commonly
+        configured centrally using HttpClientFactory and Polly.
+    </div>
+    `
+},
+"Program.cs": {
+    "answer": `
+<pre><code class="language-csharp">
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using ECommerce.API.Data;
+using ECommerce.API.Middlewares;
+using ECommerce.API.Repositories;
+using ECommerce.API.Services;
+
+var builder = WebApplication.CreateBuilder(args);
+
+
+//==================================================
+// Logging
+//==================================================
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+
+//==================================================
+// Configuration
+//==================================================
+
+var configuration = builder.Configuration;
+
+
+//==================================================
+// Database
+//==================================================
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlServer(
+        configuration.GetConnectionString("DefaultConnection"));
+});
+
+
+//==================================================
+// Dependency Injection
+//==================================================
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+//==================================================
+// Memory Cache
+//==================================================
+
+builder.Services.AddMemoryCache();
+
+
+//==================================================
+// Distributed Cache (Redis)
+//==================================================
+
+// builder.Services.AddStackExchangeRedisCache(options =>
+// {
+//      options.Configuration = "localhost:6379";
+// });
+
+
+//==================================================
+// Controllers
+//==================================================
+
+builder.Services.AddControllers();
+
+
+//==================================================
+// Swagger
+//==================================================
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen();
+
+
+//==================================================
+// JWT Authentication
+//==================================================
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters =
+        new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = configuration["Jwt:Issuer"],
+
+            ValidAudience = configuration["Jwt:Audience"],
+
+            IssuerSigningKey =
+                new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+        };
+});
+
+
+//==================================================
+// Authorization
+//==================================================
+
+builder.Services.AddAuthorization();
+
+
+//==================================================
+// CORS
+//==================================================
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
+//==================================================
+// Rate Limiting (.NET 8)
+//==================================================
+
+//builder.Services.AddRateLimiter(...);
+
+
+//==================================================
+// Response Compression
+//==================================================
+
+builder.Services.AddResponseCompression();
+
+
+//==================================================
+// Health Checks
+//==================================================
+
+builder.Services.AddHealthChecks();
+
+
+//==================================================
+// HttpClient
+//==================================================
+
+builder.Services.AddHttpClient();
+
+
+//==================================================
+// Build App
+//==================================================
+
+var app = builder.Build();
+
+
+//==================================================
+// Middleware Pipeline
+//==================================================
+
+
+//--------------------------------------------------
+// Global Exception Handler
+//--------------------------------------------------
+
+app.UseExceptionHandler("/error");
+
+
+//--------------------------------------------------
+// Swagger
+//--------------------------------------------------
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+
+    app.UseSwaggerUI();
+}
+
+
+//--------------------------------------------------
+// HTTPS
+//--------------------------------------------------
+
+app.UseHttpsRedirection();
+
+
+//--------------------------------------------------
+// Static Files
+//--------------------------------------------------
+
+app.UseStaticFiles();
+
+
+//--------------------------------------------------
+// Response Compression
+//--------------------------------------------------
+
+app.UseResponseCompression();
+
+
+//--------------------------------------------------
+// CORS
+//--------------------------------------------------
+
+app.UseCors("AllowAngular");
+
+
+//--------------------------------------------------
+// Rate Limiting
+//--------------------------------------------------
+
+// app.UseRateLimiter();
+
+
+//--------------------------------------------------
+// Routing
+//--------------------------------------------------
+
+app.UseRouting();
+
+
+//--------------------------------------------------
+// Authentication
+//--------------------------------------------------
+
+app.UseAuthentication();
+
+
+//--------------------------------------------------
+// Authorization
+//--------------------------------------------------
+
+app.UseAuthorization();
+
+
+//--------------------------------------------------
+// Custom Request Logging Middleware
+//--------------------------------------------------
+
+app.UseMiddleware<RequestLoggingMiddleware>();
+
+
+//--------------------------------------------------
+// Health Check
+//--------------------------------------------------
+
+app.MapHealthChecks("/health");
+
+
+//--------------------------------------------------
+// Controllers
+//--------------------------------------------------
+
+app.MapControllers();
+
+app.Run();
+</code></pre>
+`
+},
+"What is a Fallback Mechanism?": {
+    "answer": `
+<p>
+    A <strong>Fallback Mechanism</strong> is a resiliency strategy that provides
+    an alternative response or behavior when the primary operation fails. It
+    ensures that the application continues to function gracefully instead of
+    returning an error to the user.
+</p>
+<p><strong>Fallback Mechanism Flow</strong></p>
+
+<pre><code class="language-text">
+Primary Operation
+        │
+        ▼
+   Success?
+   ┌───────┴────────┐
+   │                │
+   ▼                ▼
+Return Result   Fallback Operation
+                    │
+                    ▼
+             Return Alternative Result
+</code></pre>
+
+<p><strong>Fallback Strategies:</strong></p>
+
+<ul>
+    <li>Return Cached Data</li>
+    <li>Return Default Data</li>
+    <li>Return Static Data</li>
+    <li>Call an Alternative Service</li>
+    <li>Return a Friendly Message</li>
+</ul>
+`
+},
+"DAST (Dynamic Application Security Testing) " :{
+"answer": `
+<p> DAST (Dynamic Application Security Testing) is a security testing technique where a running
+ application or API is tested from the outside, just like a real attacker would.</p>
+ <p><strong>What vulnerabilities does DAST detect?</strong></p>
+ <ul>
+     <li>SQL Injection</li>
+     <li>Cross-Site Scripting (XSS)</li>
+     <li>Broken Authentication</li>
+     <li>Broken Authorization</li>
+     <li>Command Injection</li>
+     <li>Path Traversal</li>
+     <li>XML External Entity (XXE)</li>
+     <li>Server Security Misconfiguration</li>
+     <li>Insecure Headers</li>
+     <li>Information Disclosure</li>
+     <li>Weak Session Management</li>
+     <li>CSRF (for web applications)</li>
+     <li>Open Redirects</li>
+ </ul>
+ <p><strong>DAST Testing Flow:</strong></p>
+ <pre><code class="language-text">
+ Application Running
+
+↓
+
+Burp Suite
+
+↓
+
+Capture HTTP Request
+
+↓
+
+Modify Request
+
+↓
+
+Send Multiple Payloads
+
+↓
+
+Analyze Response
+
+↓
+
+Generate Report
+</pre></code>
+`
+},
 };

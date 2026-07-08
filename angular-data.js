@@ -2983,5 +2983,83 @@ export class LoginComponent {
     </div>
     `
 },
+"Angular Global Error Handler": {
+    "answer": `
+    <p>
+        Angular provides a global error handling mechanism through the
+        <strong>ErrorHandler</strong> class. By default, Angular logs errors
+        to the console, but we can create a custom error handler to log errors
+        to an external service, show user-friendly messages, or perform other
+        actions when an error occurs.
+    </p>
 
+    <p><strong>Global Error Handling Flow</strong></p>
+
+    <pre><code class="language-text">
+Component / Service
+      │
+      ▼
+Error Occurs
+      │
+      ▼
+Custom ErrorHandler
+      │
+      ├── Log Error to Console
+      ├── Send Error to External Service
+      ├── Show User-Friendly Message
+      └── Perform Cleanup Actions
+    </code></pre>
+
+    <p><strong>Custom Error Handler Example</strong></p>
+
+    <pre><code class="language-typescript">
+import { ErrorHandler, Injectable } from '@angular/core';
+
+@Injectable()
+export class GlobalErrorHandler implements ErrorHandler {
+
+  handleError(error: any): void {
+    // Log error to console
+    console.error('An error occurred:', error);
+
+    // Send error to external logging service
+    // this.loggingService.logError(error);
+
+    // Show user-friendly message
+    alert('An unexpected error occurred. Please try again later.');
+  }
+}
+    </code></pre>
+
+    <p><strong>Register the Custom Error Handler</strong></p>
+
+    <pre><code class="language-typescript">
+providers: [
+{
+    provide: ErrorHandler,
+    useClass: GlobalErrorHandler
+}
+]
+    </code></pre>
+
+    <p><strong>Best Practices</strong></p>
+
+    <ul>
+        <li>Log errors to an external monitoring service.</li>
+        <li>Show user-friendly messages instead of raw errors.</li>
+        <li> Avoid exposing sensitive information in error messages.</li>
+        <li>Use try-catch blocks for synchronous code where appropriate.</li>
+        <li>Handle errors in Observables using catchError() and throwError().</li>
+        <li>Perform cleanup actions if necessary (e.g., unsubscribe from Observables).</li>
+    </ul>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Angular's global error handling is implemented using a custom ErrorHandler
+        class, which allows centralized logging, user-friendly messaging, and
+        integration with external monitoring services.
+    </div>
+    `
+},
 };
