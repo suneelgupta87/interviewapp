@@ -21,14 +21,59 @@ window.data.core = {
 <p></p>
     `
 },
-  "What is middleware in ASP.NET Core?": {
+"What is Middleware in ASP.NET Core?": {
     "answer": `
-<h3>Answer</h3>
-<p>
-Middleware is a component that runs in the HTTP request pipeline and can inspect, modify, or short-circuit requests and responses.
-</p>
-`
-  },
+    <p>
+    Middleware is a reusable software component in ASP.NET Core that sits in the HTTP request
+    pipeline. It intercepts every incoming request and outgoing response, allowing us to execute
+    custom logic before and after the next middleware by calling await next(). Middleware is
+    primarily used to implement cross-cutting concerns such as authentication, authorization,
+    logging, exception handling, CORS, rate limiting, response compression, and
+    request/response transformation. It is registered in Program.cs, and the order of 
+    registration is important because middleware executes in the same sequence in which
+    it is added.
+    </p>
+
+    <p><strong>How Middleware Works</strong></p>
+
+    <ul>
+        <li>Receives the incoming HTTP request.</li>
+        <li>Performs a specific task (logging, authentication, exception handling, etc.).</li>
+        <li>Calls the next middleware in the pipeline using <strong>next()</strong>.</li>
+        <li>Can modify the outgoing HTTP response.</li>
+        <li>Can short-circuit the pipeline and return a response without calling the next middleware.</li>
+    </ul>
+
+    <p><strong>Built-in Middleware Examples</strong></p>
+
+    <ul>
+        <li>Exception Handling Middleware</li>
+        <li>HTTPS Redirection Middleware</li>
+        <li>Static File Middleware</li>
+        <li>Routing Middleware</li>
+        <li>Authentication Middleware</li>
+        <li>Authorization Middleware</li>
+        <li>CORS Middleware</li>
+        <li>Rate Limiting Middleware</li>
+    </ul>
+
+    <p><strong>Register Middleware</strong></p>
+
+    <pre><code class="language-csharp">
+var app = builder.Build();
+
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+    </code></pre>
+    `
+},
   "Service lifetimes in ASP.NET Core": {
     "answer": `
     <p>
@@ -45,7 +90,7 @@ Middleware is a component that runs in the HTTP request pipeline and can inspect
         <li><strong>Scoped</strong> - One instance is created per HTTP request and shared throughout that request.</li>
         <li><strong>Singleton</strong> - A single instance is created once and shared throughout the application's lifetime.</li>
     </ul>
-
+<p>A singleton cannot depend on a scoped service.</p>
     <p><strong>Common Use Cases:</strong></p>
 
     <ul>
@@ -57,39 +102,6 @@ Middleware is a component that runs in the HTTP request pipeline and can inspect
     <div class="interview-answer">
         <strong>Interview One-Liner:</strong>
         ASP.NET Core DI supports three service lifetimes: Transient (new instance every request), Scoped (one instance per HTTP request), and Singleton (one instance for the entire application).
-    </div>
-    `
-},
-  "Middleware": {
-    "answer": `
-    <p>
-        <strong>Middleware</strong> is software that sits in the HTTP request
-        processing pipeline of ASP.NET Core. It processes incoming requests
-        before they reach the application and outgoing responses before they
-        are sent back to the client.
-    </p>
-
-    <p>
-        Each middleware component can perform an operation, pass the request
-        to the next middleware, or terminate the request pipeline by returning
-        a response.
-    </p>
-
-    <p><strong>Common Use Cases:</strong></p>
-
-    <ul>
-        <li>Authentication and Authorization.</li>
-        <li>Exception handling.</li>
-        <li>Request and response logging.</li>
-        <li>Serving static files.</li>
-        <li>HTTPS redirection.</li>
-        <li>Routing requests to controllers.</li>
-        <li>CORS configuration.</li>
-    </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        Middleware is a component in the ASP.NET Core request pipeline that processes HTTP requests and responses before they reach the application or the client.
     </div>
     `
 },
@@ -163,20 +175,14 @@ Middleware is a component that runs in the HTTP request pipeline and can inspect
     </div>
     `
 },
-"Middleware and Filters in ASP.NET Core?": {
+"Diff b/w Middleware and Filters in ASP.NET Core?": {
     "answer": `
     <p>
-        Both <strong>Middleware</strong> and <strong>Filters</strong> are used to
-        process requests in ASP.NET Core, but they execute at different stages of
-        the request pipeline.
+       Middleware executes for every HTTP request before the request reaches the MVC pipeline, 
+       making it suitable for application-wide concerns. Filters execute only for MVC/Web 
+       API actions and are used for controller or action-specific logic such as model validation,
+       authorization, or action logging.
     </p>
-
-    <p>
-        <strong>Middleware</strong> executes before the request reaches the MVC
-        pipeline and after the response leaves it. <strong>Filters</strong> execute
-        only inside the MVC pipeline around controller actions.
-    </p>
-
     <p><strong>Key Differences:</strong></p>
 
     <ul>
@@ -187,11 +193,6 @@ Middleware is a component that runs in the HTTP request pipeline and can inspect
         <li><strong>Middleware</strong> → Used for Authentication, CORS, Logging, Exception Handling.</li>
         <li><strong>Filters</strong> → Used for Authorization, Action Validation, Exception Handling, Result Processing.</li>
     </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        Middleware works at the application level for every request, whereas Filters work only within the MVC pipeline around controller actions.
-    </div>
     `
 },
 "Explain the Request Processing Pipeline in ASP.NET Core": {
@@ -397,7 +398,28 @@ Client (Browser/Angular/Postman)
         multiple tasks at the same time, while <strong>Parallelism</strong> is the
         execution of multiple tasks simultaneously using multiple CPU cores.
     </p>
-
+<table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <thead style="background-color: #f2f2f2;">
+        <tr>
+            <th>Concurrency</th>
+            <th>Parallelism</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Multiple tasks make progress during the same period of time.</td>
+            <td>Multiple tasks execute at the exact same time.</td>
+        </tr>
+        <tr>
+            <td>Doesn't require multiple CPU cores.</td>
+            <td>Usually requires multiple CPU cores.</td>
+        </tr>
+        <tr>
+            <td>Focuses on handling many tasks efficiently.</td>
+            <td>Focuses on completing work faster.</td>
+        </tr>
+    </tbody>
+</table>
     <p>
         In .NET Core, <strong>Concurrency</strong> is commonly implemented using
         <code>Task</code>, <code>async/await</code>, and
@@ -527,6 +549,10 @@ Parallel.ForEach(images, image =>
 },
 "What is AddHttpClient() in ASP.NET Core?": {
     "answer": `
+    <p>AddHttpClient() is an extension method used to register IHttpClientFactory with the 
+    Dependency Injection container. It enables creating and configuring HttpClient instances
+     in a safe and efficient way.
+    </p>
     <p>
         <strong>AddHttpClient()</strong> is an extension method used to register
         and configure <code>HttpClient</code> with the built-in Dependency Injection
@@ -887,10 +913,15 @@ Return Short URL
 "How do you create Custom Middleware in ASP.NET Core?": {
     "answer": `
     <p>
-        <strong>Custom Middleware</strong> allows developers to execute custom
-        logic before and after an HTTP request is processed. Middleware is part
-        of the ASP.NET Core request pipeline and is commonly used for logging,
-        exception handling, authentication, request validation, and auditing.
+       A custom middleware is a reusable component that intercepts every HTTP request and 
+       response in the ASP.NET Core pipeline. We create a class that accepts RequestDelegate
+        through constructor injection and implements an InvokeAsync(HttpContext context) method.
+         Inside InvokeAsync, we execute our custom logic, call await _next(context) to pass the 
+         request to the next middleware, and can also execute logic after the response returns.
+          Finally, we register it in Program.cs using app.UseMiddleware<MiddlewareName>() or 
+          a custom extension method. We typically use custom middleware for cross-cutting 
+          concerns such as logging, global exception handling, API key validation, 
+          request/response modification, custom headers, and performance monitoring.
     </p>
 
     <p><strong>Steps to Create Custom Middleware:</strong></p>
@@ -930,39 +961,7 @@ public class RequestLoggingMiddleware
     <pre><code class="language-csharp">
 app.UseMiddleware<RequestLoggingMiddleware>();
     </code></pre>
-
-    <p><strong>Request Pipeline</strong></p>
-
-    <pre><code class="language-text">
-Client
-   │
-   ▼
-RequestLoggingMiddleware
-   │
-   ▼
-Authentication Middleware
-   │
-   ▼
-Authorization Middleware
-   │
-   ▼
-Controller
-   │
-   ▼
-Response
-    </code></pre>
-
-    <p><strong>Real-Time Example:</strong></p>
-
-    <p>
-        In a banking application, a custom logging middleware records the
-        request URL, HTTP method, response status code, execution time, and
-        correlation ID for every request. These logs are stored in Application
-        Insights for troubleshooting and auditing.
-    </p>
-
     <p><strong>Common Use Cases:</strong></p>
-
     <ul>
         <li>Global Exception Handling.</li>
         <li>Request and Response Logging.</li>
@@ -971,11 +970,6 @@ Response
         <li>Correlation ID Tracking.</li>
         <li>Custom Headers.</li>
     </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        Custom Middleware is created by implementing an InvokeAsync() method that receives HttpContext, executes custom logic, calls the next middleware using RequestDelegate, and is registered in the ASP.NET Core request pipeline.
-    </div>
     `
 },
 };

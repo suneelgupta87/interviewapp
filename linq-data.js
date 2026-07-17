@@ -552,4 +552,29 @@ names.Remove("John");
     </div>
     `
 },
+"Total Empoloyee Count Departmentwise" :{
+    "answer":`
+    <strong><p> LINQ Method Syntax </strong></p>
+
+   <pre><code class="language-sql">
+   var result = employees
+    .GroupBy(e => e.Department)
+    .Select(g => new
+    {
+        Department = g.Key,
+        EmployeeCount = g.Count()
+    });
+    </pre></code>
+      <strong><p> LINQ Query Syntax </strong></p>
+         <pre><code class="language-sql">
+var result = from e in employees
+             group e by e.Department into g
+             select new
+             {
+                 Department = g.Key,
+                 EmployeeCount = g.Count()
+             };
+         </pre></code>
+    `
+}
 };

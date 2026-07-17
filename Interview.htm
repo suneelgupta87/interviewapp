@@ -14,7 +14,10 @@ body{
             background:#f4f7fb;
             /* padding:20px; */
         }
-
+.interview-answer{
+      font-size: 18px;
+    line-height: 1.8;
+}
         .card{
             max-width:900px;
             margin:auto;
@@ -60,6 +63,34 @@ body{
             border-left:5px solid #0d6efd;
             margin-top:20px;
             border-radius:5px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+        }
+
+        .table.table-bordered,
+        .table-bordered {
+            border: 1px solid #d0d7de;
+        }
+
+        .table.table-bordered th,
+        .table.table-bordered td,
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #d0d7de;
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .table.table-bordered th,
+        .table-bordered th {
+            background: #f6f8fa;
+            font-weight: 600;
         }
 *{
 margin:0;
@@ -531,8 +562,10 @@ function showQuestion(topic,q){
 currentTopic = topic;
 currentQuestion = q;
 
+const answerBox = document.getElementById("answer");
 document.getElementById("title").textContent = q;
-document.getElementById("answer").innerHTML = data[topic][q].answer;
+answerBox.innerHTML = data[topic][q].answer;
+answerBox.scrollTop = 0;
 
 document.getElementById("popup").style.display = "block";
 centerModal();

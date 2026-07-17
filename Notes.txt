@@ -21,3 +21,10 @@
     </div>
     `
 },
+
+------------------------------------------------------
+<strong><p>  </strong></p>
+
+   <pre><code class="language-sql">
+
+    </pre></code>

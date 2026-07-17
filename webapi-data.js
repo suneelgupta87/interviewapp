@@ -3,19 +3,22 @@ window.data.WEBAPI = {
   "How to Secure an ASP.NET Core Web API?": {
     "answer": `
     <p>
-        Securing an ASP.NET Core Web API requires multiple layers of security.
-        Authentication alone is not enough. A secure API should protect against
-        unauthorized access, malicious input, data leakage, and denial-of-service attacks.
+    To secure a Web API, I focus on multiple security layers. First, I implement authentication
+    using JWT or OAuth and authorization using roles or policies. Second, I enforce HTTPS 
+    and validate all incoming requests to prevent security vulnerabilities. Third, I protect
+    the API using rate limiting, proper CORS configuration, and secure secret management 
+    such as Azure Key Vault. Finally, I ensure proper exception handling and logging without 
+    exposing sensitive information.
     </p>
 
     <p><strong>Best Practices to Secure a Web API:</strong></p>
 
     <ul>
-        <li>Use HTTPS for all communication.</li>
         <li>Implement JWT or OAuth 2.0 authentication.</li>
         <li>Use Role-Based or Policy-Based Authorization.</li>
-        <li>Validate all user input.</li>
+        <li>Use HTTPS for all communication.</li>
         <li>Enable CORS only for trusted origins.</li>
+        <li>Validate all user input. -- Prevent SQL Injection, XSS attack</li>
         <li>Implement Rate Limiting to prevent abuse.</li>
         <li>Store secrets securely using Azure Key Vault.</li>
         <li>Never expose sensitive information in error messages.</li>
@@ -58,22 +61,6 @@ builder.Services.AddRateLimiter(options =>
     });
 });
     </code></pre>
-
-    <p><strong>Real-Time Example:</strong></p>
-
-    <p>
-        In a Banking API, users authenticate using Microsoft Entra ID (Azure AD)
-        and receive a JWT Access Token. APIs are accessed only over HTTPS.
-        Admin APIs use Role-Based Authorization, secrets are stored in Azure
-        Key Vault, and Application Insights monitors suspicious activities.
-    </p>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        A secure Web API uses HTTPS, JWT/OAuth authentication, authorization,
-        input validation, rate limiting, secure secret management, centralized
-        logging, and continuous monitoring.
-    </div>
     `
 },
   "What is Idempotency in REST API?": {
@@ -205,74 +192,6 @@ public IActionResult GetOrderDetails(int id)
     </div>
     `
 },
-"What is Session in ASP.NET Core Web API?": {
-    "answer": `
-    <p>
-        <strong>Session</strong> is a server-side mechanism used to store
-        user-specific data across multiple HTTP requests. Each user is assigned
-        a unique Session ID, which is stored in a browser cookie and used to
-        retrieve the session data from the server.
-    </p>
-
-    <p>
-        Although ASP.NET Core supports Session in Web APIs, it is generally
-        <strong>not recommended</strong> because REST APIs should be
-        <strong>stateless</strong>. Instead, authentication is commonly handled
-        using <strong>JWT Tokens</strong> or <strong>OAuth</strong>.
-    </p>
-
-    <p><strong>Key Points:</strong></p>
-
-    <ul>
-        <li>Session data is stored on the server.</li>
-        <li>The browser stores only the Session ID.</li>
-        <li>REST APIs should remain stateless.</li>
-        <li>JWT is preferred over Session for Web APIs.</li>
-    </ul>
-
-    <p><strong>Implementation Example:</strong></p>
-
-    <pre><code class="language-csharp">
-// Register Session
-builder.Services.AddDistributedMemoryCache();
-
-builder.Services.AddSession();
-
-app.UseSession();
-    </code></pre>
-
-    <pre><code class="language-csharp">
-// Store value
-HttpContext.Session.SetString("UserName", "John");
-
-// Read value
-string user = HttpContext.Session.GetString("UserName");
-    </code></pre>
-
-    <p><strong>Real-Time Example:</strong></p>
-
-    <p>
-        In a traditional ASP.NET MVC application, Session can store
-        user-specific information such as User ID, Shopping Cart, or Language
-        Preference. However, in REST APIs, user information is typically carried
-        in a JWT token instead of storing it in Session.
-    </p>
-
-    <p><strong>Common Use Cases:</strong></p>
-
-    <ul>
-        <li>ASP.NET MVC Applications.</li>
-        <li>Shopping Cart.</li>
-        <li>User Preferences.</li>
-        <li>Temporary User Data.</li>
-    </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        Session stores user-specific data on the server, but it is generally not recommended for REST APIs because APIs should be stateless. JWT Tokens are the preferred approach.
-    </div>
-    `
-},
 "REST and RESTful API": {
     "answer": `
     <p>
@@ -289,13 +208,70 @@ string user = HttpContext.Session.GetString("UserName");
 
     <p><strong>REST Principles:</strong></p>
 
+    <p><strong>1. Stateless</strong></p>
+
     <ul>
-        <li>Client-Server Architecture.</li>
-        <li>Stateless Communication.</li>
-        <li>Resource-Based URLs.</li>
-        <li>Uses Standard HTTP Methods (GET, POST, PUT, DELETE).</li>
-        <li>Supports Caching.</li>
-        <li>Uniform Interface.</li>
+        <li>Each request must contain all the information required to process it.</li>
+        <li>The server does not store client session state between requests.</li>
+        <li>Each request is independent of previous requests.</li>
+    </ul>
+
+    <p><strong>2. Client-Server Separation</strong></p>
+
+    <ul>
+        <li>The client is responsible for the user interface.</li>
+        <li>The server manages business logic and data.</li>
+        <li>This separation allows both to evolve independently.</li>
+    </ul>
+
+    <p><strong>3. Uniform Interface</strong></p>
+
+    <ul>
+        <li>Resources are accessed using consistent URIs.</li>
+        <li>Standard HTTP methods such as GET, POST, PUT, PATCH, and DELETE are used.</li>
+        <li>This makes APIs predictable and easy to consume.</li>
+    </ul>
+
+    <p><strong>4. Resource-Based</strong></p>
+
+    <ul>
+        <li>Everything is treated as a resource.</li>
+        <li>Each resource is identified by a unique URI.</li>
+    </ul>
+
+    <pre><code class="language-text">
+/api/users
+/api/products
+/api/orders
+    </code></pre>
+
+    <p><strong>5. Representation</strong></p>
+
+    <ul>
+        <li>Clients interact with resource representations rather than the resource itself.</li>
+        <li>JSON is the most commonly used format, although XML is also supported.</li>
+    </ul>
+
+    <p><strong>6. Cacheability</strong></p>
+
+    <ul>
+        <li>Responses should indicate whether they can be cached.</li>
+        <li>Caching improves performance and reduces server load.</li>
+    </ul>
+
+    <p><strong>7. Layered System</strong></p>
+
+    <ul>
+        <li>Multiple layers such as API Gateways, proxies, and load balancers can exist between the client and server.</li>
+        <li>The client does not need to know how many layers are involved.</li>
+    </ul>
+
+    <p><strong>8. Code-on-Demand (Optional)</strong></p>
+
+    <ul>
+        <li>The server may send executable code to extend client functionality.</li>
+        <li>For example, JavaScript can be sent to browsers.</li>
+        <li>This constraint is optional and is rarely used in modern REST APIs.</li>
     </ul>
 
     <p><strong>Implementation Example:</strong></p>
@@ -338,7 +314,7 @@ DELETE /api/employees/101
     </div>
     `
 },
-"Common HTTP Status Codes in ASP.NET Core Web API": {
+"HTTP Status Codes in Web API": {
     "answer": `
     <p>
         <strong>HTTP Status Codes</strong> indicate the result of an HTTP request.
@@ -426,64 +402,6 @@ DELETE /api/employees/101
 
     </table>
 
-    <p><strong>Implementation Example:</strong></p>
-
-    <pre><code class="language-csharp">
-// 200 OK
-return Ok(employee);
-
-// 201 Created
-return CreatedAtAction(nameof(GetById), new { id = employee.Id }, employee);
-
-// 204 No Content
-return NoContent();
-
-// 400 Bad Request
-return BadRequest("Invalid Request");
-
-// 401 Unauthorized
-return Unauthorized();
-
-// 403 Forbidden
-return Forbid();
-
-// 404 Not Found
-return NotFound();
-
-// 409 Conflict
-return Conflict("Employee already exists.");
-
-// 500 Internal Server Error
-return StatusCode(500, "Internal Server Error");
-    </code></pre>
-
-    <p><strong>Real-Time Example:</strong></p>
-
-    <p>
-        In an Employee API:
-        <br>• GET Employee → <strong>200 OK</strong>
-        <br>• POST Employee → <strong>201 Created</strong>
-        <br>• DELETE Employee → <strong>204 No Content</strong>
-        <br>• Invalid Request → <strong>400 Bad Request</strong>
-        <br>• Employee Not Found → <strong>404 Not Found</strong>
-        <br>• Invalid JWT → <strong>401 Unauthorized</strong>
-        <br>• No Permission → <strong>403 Forbidden</strong>
-        <br>• Unhandled Exception → <strong>500 Internal Server Error</strong>
-    </p>
-
-    <p><strong>Common Use Cases:</strong></p>
-
-    <ul>
-        <li>REST APIs</li>
-        <li>Microservices</li>
-        <li>Authentication & Authorization</li>
-        <li>CRUD Operations</li>
-    </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        HTTP Status Codes indicate the outcome of an API request. The most commonly used codes are 200, 201, 204, 400, 401, 403, 404, 409, 500, and 503.
-    </div>
     `
 },
 "Difference between PUT and PATCH": {
@@ -642,27 +560,31 @@ app.UseCors("MyCorsPolicy");
     </div>
     `
 },
-"How do you improve the performance of a slow ASP.NET Core Web API?": {
+"Improve API performance": {
     "answer": `
     <p>
-        Improving Web API performance involves identifying the bottleneck and
-        optimizing database access, application code, network communication,
-        and infrastructure. The first step is to measure performance using
-        profiling and monitoring tools before applying optimizations.
+    API performance can be improved by optimizing database queries, reducing payload size, 
+    implementing caching, using asynchronous programming, enabling response compression, 
+    pagination, efficient indexing, connection pooling, and minimizing unnecessary 
+    network calls. We should also monitor the API using Application Insights or other
+    monitoring tools to identify bottlenecks and optimize based on metrics.
     </p>
 
     <p><strong>Performance Optimization Techniques:</strong></p>
-
     <ul>
-        <li>Optimize SQL queries and add proper indexes.</li>
-        <li>Use asynchronous programming (<code>async/await</code>).</li>
-        <li>Implement caching (IMemoryCache / Redis Cache).</li>
-        <li>Reduce unnecessary database calls.</li>
+        <li>Optimizing database queries - Use proper indexes , Avoid SELECT * , Avoid N+1 queries in EF Core,
+        ,Use stored procedures where appropriate.,Retrieve only required columns using Select(), </li>
+        <li>Use asynchronous programming (<code>async/await</code>). - Avoid blocking threads.</li>
+        <li>Implement caching (IMemoryCache / Redis Cache). - Reduce unnecessary database calls.</li>
+         <li>Avoid Multiple Database Calls - Use joins or eager loading. </li>
         <li>Use pagination for large datasets.</li>
-        <li>Return only required fields using DTOs.</li>
+        <li>Reduce Payload Size - Return only required fields using DTOs.</li>
         <li>Enable response compression.</li>
         <li>Use HttpClientFactory for external API calls.</li>
         <li>Execute independent API calls using <code>Task.WhenAll()</code>.</li>
+        <li>Use CDN</li>
+        <li>Rate Limiting</li>
+        <li>Optimize Serialization </li>
         <li>Use Application Insights or logging to identify bottlenecks.</li>
     </ul>
 
@@ -695,31 +617,6 @@ await Task.WhenAll(
     inventoryService.UpdateInventoryAsync(),
     emailService.SendEmailAsync());
     </code></pre>
-
-    <p><strong>Real-Time Example:</strong></p>
-
-    <p>
-        In an e-commerce application, the Product API was taking 6 seconds
-        because it queried the database for every request. We added Redis Cache,
-        optimized SQL indexes, used async database calls, and implemented
-        pagination. The response time improved from 6 seconds to less than
-        500 milliseconds.
-    </p>
-
-    <p><strong>Common Use Cases:</strong></p>
-
-    <ul>
-        <li>High-traffic REST APIs.</li>
-        <li>Microservices.</li>
-        <li>E-commerce applications.</li>
-        <li>Financial applications.</li>
-        <li>Cloud-hosted APIs on Azure.</li>
-    </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        Improve Web API performance by optimizing database queries, using async programming, implementing caching, reducing unnecessary data transfer, executing independent tasks concurrently, and monitoring performance using Application Insights.
-    </div>
     `
 },
 "Explain JWT Authentication implementation in ASP.NET Core Web API": {
@@ -742,30 +639,61 @@ await Task.WhenAll(
         <li>Client sends the token in the Authorization header.</li>
         <li>ASP.NET Core validates the token before executing the API.</li>
     </ol>
+<p><strong>JWT Structure</strong></p>
+ <pre><code class="language-csharp"> 
+ Header.Payload.Signature 
+xxxxx.yyyyy.zzzzz
+  </pre></code>
+Header → Algorithm (HS256), Token Type (JWT)<br>
+Payload → Claims (UserId, Name, Role, Issuer, Audience, Expiry)<br>
+Signature → Verifies that the token has not been tampered with<br>
 
+<p><strong>JWT Tocken Generation:</strong></p>
+ <pre><code class="language-csharp">
+ private string GenerateToken() 
+{
+    var jwtsettings = _configuration.GetSection("JwtSettings").Get<JwtSettings>();
+    var claim = new[]
+    {
+        new Claim(ClaimTypes.Name,"admin"),
+        new Claim(ClaimTypes.Role,"admin")
+    };
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtsettings.Key));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    var expires = DateTime.Now.AddMinutes(Convert.ToDouble(jwtsettings.DurationInMinutes));
+
+    var token = new JwtSecurityToken(
+        issuer: jwtsettings.Issuer,
+        audience: jwtsettings.Audience,
+        expires: expires,
+        claims: claim,
+        signingCredentials: creds);
+
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
+   </pre></code>  
     <p><strong>Configure JWT Authentication:</strong></p>
 
     <pre><code class="language-csharp">
 // Program.cs
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
+        var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
 
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-
-        IssuerSigningKey =
-            new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    };
-});
+        };
+        
+    });
 
 builder.Services.AddAuthorization();
     </code></pre>
@@ -788,29 +716,6 @@ public IActionResult GetEmployees()
 }
     </code></pre>
 
-    <p><strong>Real-Time Example:</strong></p>
-
-    <p>
-        In an Employee Management System, after a user logs in successfully,
-        the server generates a JWT token. The Angular application stores
-        the token and sends it with every API request. The Web API validates
-        the token before allowing access to protected endpoints.
-    </p>
-
-    <p><strong>Common Use Cases:</strong></p>
-
-    <ul>
-        <li>ASP.NET Core Web APIs.</li>
-        <li>Angular and React applications.</li>
-        <li>Mobile applications.</li>
-        <li>Microservices authentication.</li>
-        <li>Cloud applications hosted on Azure.</li>
-    </ul>
-
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        JWT provides stateless authentication by issuing a signed token after successful login. The client sends the token with every request, and ASP.NET Core validates it before granting access to protected APIs.
-    </div>
     `
 },
 "Explain OAuth 2.0 in ASP.NET Core Web API": {
@@ -1574,5 +1479,136 @@ Analyze Response
 Generate Report
 </pre></code>
 `
+},
+"What is Caching in ASP.NET Core Web API?": {
+    "answer": `
+    <p>
+        <strong>Caching</strong> is a technique used to temporarily store
+        frequently accessed data so that future requests can be served
+        quickly without repeatedly querying the database or calling external services.
+        Caching improves application performance, reduces database load,
+        decreases response time, and helps applications scale under high traffic.
+    </p>
+    <p><strong>Why Do We Use Caching?</strong></p>
+
+    <ul>
+        <li>Improves API response time.</li>
+        <li>Reduces database load.</li>
+        <li>Reduces network calls.</li>
+        <li>Improves application scalability.</li>
+        <li>Provides a better user experience.</li>
+        <li>Handles high traffic efficiently.</li>
+    </ul>
+    <p><strong>Types of Caching in ASP.NET Core Web API</strong></p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Cache Type</th>
+            <th>Description</th>
+            <th>Best For</th>
+        </tr>
+
+        <tr>
+            <td><strong>IMemoryCache</strong></td>
+            <td>Stores data in the application's memory (RAM).</td>
+            <td>Single-server applications.</td>
+        </tr>
+
+        <tr>
+            <td><strong>IDistributedCache</strong></td>
+            <td>Stores data in a distributed cache such as Redis or SQL Server.</td>
+            <td>Multi-server and cloud applications.</td>
+        </tr>
+
+        <tr>
+            <td><strong>Response Caching</strong></td>
+            <td>Caches complete HTTP responses for GET requests.</td>
+            <td>Public APIs and static data.</td>
+        </tr>
+
+        <tr>
+            <td><strong>Output Caching (.NET 7/8)</strong></td>
+            <td>Caches generated responses on the server with advanced cache policies.</td>
+            <td>High-performance Web APIs.</td>
+        </tr>
+    </table>
+    `
+},
+"What is Payload Size?": {
+    "answer": `
+    <p>
+        <strong>Payload Size</strong> is the amount of actual data sent between
+        the client and the server in an HTTP request or response. It does not
+        include protocol overhead such as HTTP headers.
+    </p>
+
+    <p><strong>Request/Response Structure</strong></p>
+
+    <pre><code class="language-text">
+HTTP Request
+    │
+    ├── Headers
+    ├── Query Parameters
+    └── Payload (Body)
+
+HTTP Response
+    │
+    ├── Headers
+    ├── Status Code
+    └── Payload (Body)
+    </code></pre>
+
+    <p><strong>Example Request Payload</strong></p>
+
+    <pre><code class="language-json">
+{
+    "name": "John",
+    "email": "john@test.com",
+    "age": 30
+}
+    </code></pre>
+
+    <p>
+        The JSON object above is the <strong>request payload</strong>. Its size
+        is measured in bytes or kilobytes.
+    </p>
+
+    <p><strong>Why Payload Size Matters</strong></p>
+
+    <ul>
+        <li>Smaller payloads reduce network bandwidth.</li>
+        <li>Faster request and response times.</li>
+        <li>Lower server processing time.</li>
+        <li>Improved application performance.</li>
+        <li>Better user experience, especially on slow networks.</li>
+    </ul>
+
+    <p><strong>How to Reduce Payload Size</strong></p>
+
+    <ul>
+        <li>Return only the required fields (DTOs).</li>
+        <li>Implement pagination for large datasets.</li>
+        <li>Enable response compression (Gzip/Brotli).</li>
+        <li>Avoid sending unnecessary or duplicate data.</li>
+        <li>Use efficient data formats such as JSON.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        Suppose a Product table contains 50 columns, but the UI only displays
+        Product Name, Price, and Stock. Instead of returning all 50 columns,
+        the API returns only the required three fields using a DTO. This
+        significantly reduces the payload size and improves response time.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Payload size is the amount of actual data transferred in the HTTP
+        request or response body. Keeping the payload small improves network
+        performance, reduces bandwidth usage, and speeds up API responses.
+    </div>
+    `
 },
 };

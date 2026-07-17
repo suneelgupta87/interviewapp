@@ -122,39 +122,29 @@ window.data.csharp = {
     </p>
     `
 },
-"Sealed Classes": {
+"Sealed Classes & Static": {
     "answer": `
     <p>
-        A <code>sealed</code> class is a class that <strong>cannot be inherited</strong>.
-        Once a class is marked as <code>sealed</code>, no other class can derive from it.
-        It is used to prevent further inheritance and protect the class implementation.
+        A sealed class is a class that can be instantiated but cannot be inherited, whereas a static
+        class cannot be instantiated or inherited and can contain only static members.
+        We use a sealed class when we want to prevent inheritance while still allowing object 
+        creation. We use a static class when we want to group utility or helper methods that 
+        don't require object state, such as Math or Convert.
     </p>
 
-    <p>
-        Sealed classes are commonly used when a class is complete, for security reasons,
-        or to prevent accidental modification through inheritance.
-    </p>
     `
 },
 
 "What is throw and throw ex in .NET?": {
     "answer": `
     <p>
-        Both <code>throw</code> and <code>throw ex</code> are used to rethrow exceptions,
-        but they differ in how they preserve exception information.
+    throw is used to rethrow the current exception while preserving the original stack trace. 
+    throw ex throws the exception object again but resets the stack trace, making it appear 
+    as if the exception originated from the current method. Therefore, throw is the recommended
+    approach because it preserves the original exception location, which is essential for
+    debugging.
     </p>
-
-    <p>
-        <code>throw</code> preserves the <strong>original stack trace</strong>, making it easier
-        to identify where the exception actually occurred. In contrast,
-        <code>throw ex</code> resets the stack trace, causing the exception to appear as if it
-        originated from the current catch block, which makes debugging more difficult.
-    </p>
-
-    <p>
-        Therefore, <strong>always use <code>throw</code> to rethrow an existing exception</strong>
-        unless you intentionally want to create a new exception.
-    </p>
+   
     `
 },
 "What are Nullable Reference Types (C# 8+)?": {
@@ -319,49 +309,51 @@ window.data.csharp = {
     </div>
     `
 },
-  "Abstract Class": {
-    "answer": `
-<h2>Abstract Class</h2>
-
-<h3>Definition</h3>
-<p>
-An abstract class is a class that cannot be instantiated directly.
-It serves as a base class for other classes and can contain both
-abstract and concrete methods.
-</p>
-
-<h3>Key Points</h3>
-<ul>
-<li>Cannot create object directly</li>
-<li>Can contain abstract and non-abstract methods</li>
-<li>Can have constructors</li>
-<li>Supports inheritance</li>
-<li>Used for code reuse</li>
-</ul>
-`
-  },
   "How is Abstraction done in C#?": {
     "answer": `
     <p>
-        <strong>Abstraction</strong> is one of the four fundamental principles
-        of Object-Oriented Programming (OOP). It is the process of hiding
-        implementation details and exposing only the essential functionality
-        to the user.
+       <strong>Show only what is necessary</strong></br>
+       Abstraction happens during design phase what has to be shown and what has to be hidden.
+       During implementation phase, developer uses encapsulation to implent the thought
+    process of abstraction.
+    <br>
+    Encapsulation implement abstraction. Encalsulation and abstraction is complements to each other. 
     </p>
+<pre><code class="language-csharp">
+static void Main(string[] arg)
+{
+    Console.WriteLine("This is the main method.");
+    Emplyee emplyee = new Emplyee();
+    emplyee.validate();
+}
 
-    <p>
-        In C#, abstraction is achieved using <strong>abstract classes</strong>
-        and <strong>interfaces</strong>. These define what an object should do,
-        while the derived class provides the implementation.
-    </p>
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        Abstraction in C# is achieved using abstract classes and interfaces, which hide implementation details and expose only essential functionality.
-    </div>
+public class Emplyee
+{
+
+    public string Name { get; set; }
+    public int Age { get; set; }
+
+    public void validate()
+    {
+        validateName();
+        validateAge();
+    }
+    private void validateName()
+    {
+    }
+    private void validateAge()
+    {
+    }
+
+}
+    </pre></code>
+   
     `
 },
   "Abstract Class and an Interface?": {
     "answer": `
+    <p>Abstract class is partially defined parent class. It can have both abstract and concrete methods.
+     It can have constructors and instance fields. A class can inherit only one abstract class.</p>
     <table class="table table-bordered">
         <tr>
             <th>Abstract Class</th>
@@ -394,11 +386,7 @@ abstract and concrete methods.
         </tr>
     </table>
 
-    <div class="tip">
-        <strong>🎯 Interview Tip:</strong><br>
-        Use an <code>Abstract Class</code> when classes share common implementation and state.<br>
-        Use an <code>Interface</code> when different classes need to follow the same contract.
-    </div>
+    
     `
   },
   "Why Interface Does Not Have Constructor": {
@@ -447,64 +435,6 @@ public abstract class Employee
     }
 }
 </pre>
-`
-  },
-  "Constructor": {
-    "answer": `
-<h2>Constructor</h2>
-
-<h3>Definition</h3>
-
-<p>
-A constructor is a special method that is executed
-automatically when an object is created.
-</p>
-
-<h3>Features</h3>
-
-<ul>
-<li>Same name as class</li>
-<li>No return type</li>
-<li>Used for initialization</li>
-<li>Called automatically</li>
-</ul>
-
-<h3>Example</h3>
-
-<pre>
-public class Employee
-{
-    public Employee() n    { n        Console.WriteLine("Created"); n    } n} n</pre> n
-<h3>Real Project Example</h3> n
-<pre"> npublic EmployeeService(IRepository repo) n{ n    _repo = repo; n} n</pre"> n
-<p"> nThis is Constructor Injection used in .NET Core. n</p"> n`
-  },
-  "Default Constructor": {
-    "answer": `
-<h2>Default Constructor</h2>
-
-<h3>Definition</h3>
-
-<p>
-A constructor without parameters.
-</p>
-
-<h3>Example</h3>
-
-<pre>
-public class Employee
-{
-    public Employee()
-    {
-    }
-}
-</pre>
-
-<h3>Usage</h3>
-
-<p>
-Used when object should be initialized with default values.
-</p>
 `
   },
   "Parameterized Constructor": {
@@ -848,7 +778,29 @@ public class ProductService
         <strong>Event</strong> is built on top of a <strong>Delegate</strong>,
         but it provides additional security by restricting who can invoke it.
     </p>
+    <p>
+    A delegate in C# is a type-safe function pointer. It stores the reference of one or 
+    more methods, allowing us to invoke those methods indirectly.
+     Delegates are commonly used for callbacks and passing methods as parameters.
+    </p>
+    <p>
+    An event is built on top of a delegate. It follows the publisher-subscriber model. 
+    The publisher raises the event, and all subscribed methods are automatically notified.
+     Events are commonly used in UI applications, notifications, and asynchronous programming.
+    </p>
+    <p>a delegate knows which methods to call, while an event knows when to call them.</p>
+Browny points - Delegate is to decouple method logic<br>
 
+Delegate is meant for callbacks<br>
+
+Delegates can be converted to Multicast += =-<br>
+
+In Multicast delegate client can manipulate the Senders de
+In multicast delegate the delegates is naked.<br>
+
+Event is PURE Publisher subcriber model<br>
+
+Event is a encapsulation over delegates.<br>
     <p><strong>Key Differences:</strong></p>
 
     <table border="1" cellpadding="5" cellspacing="0">
@@ -1231,4 +1183,21 @@ Middleware
     </div>
     `
 },
+"Garbage Collector (GC)":{
+    "answer":`
+    <strong><p>Garbage Collector  </strong></p>
+Garbage collector is a background process which run undetermestically 
+and clean unreferenced managed objects from memory.<br>
+<p>Managed resource are those which are pure .NET objects and these objects are controlled by .NET CLR</p>
+<p>Unmanged resource are those which are not controlled by .NET CLR runtime like file handle, COM object,cobbection objects</p>
+<p>In Using statement when object goes out of scope GC reclaims the memory and gives it to OS.<p>
+
+Its helping prevent memory leaks and improving application performance."
+  <p>
+  .NET Garbage Collector has three generations—Gen 0, Gen 1, and Gen 2. New objects are created
+   in Gen 0, surviving objects are promoted to higher generations, and unreachable objects 
+   are automatically reclaimed to optimize memory usage and application performance.
+  </p>
+    `
+}
 };

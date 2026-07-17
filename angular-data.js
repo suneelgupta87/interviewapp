@@ -400,7 +400,13 @@ message = 'Hello Angular';
     </code></pre>
 
     <p><strong>2. Child to Parent - @Output()</strong></p>
-
+<p>
+In Angular, child-to-parent communication is achieved using the @Output() decorator along
+ with EventEmitter. The child component raises an event by calling emit(), and the parent 
+ component listens to that event using event binding. This approach keeps the child component 
+ reusable because it doesn't directly depend on the parent; it only notifies that something 
+ has happened, and the parent decides how to handle it.
+</p>
     <pre><code class="language-typescript">
 // Child Component
 @Output() save = new EventEmitter&lt;string&gt;();
@@ -3062,4 +3068,144 @@ providers: [
     </div>
     `
 },
+"What is the Angular Component Lifecycle?": {
+    "answer": `
+    <p>
+        The <strong>Angular Component Lifecycle</strong> is a sequence of
+        lifecycle hooks that Angular calls from the moment a component is
+        created until it is destroyed. These hooks allow developers to execute
+        code at different stages of a component's life.
+    </p>
+
+    <p><strong>Angular Lifecycle Flow</strong></p>
+
+    <pre><code class="language-text">
+Component Created
+        │
+        ▼
+constructor()
+        │
+        ▼
+ngOnChanges()
+        │
+        ▼
+ngOnInit()
+        │
+        ▼
+ngDoCheck()
+        │
+        ▼
+ngAfterContentInit()
+        │
+        ▼
+ngAfterContentChecked()
+        │
+        ▼
+ngAfterViewInit()
+        │
+        ▼
+ngAfterViewChecked()
+        │
+        ▼
+ngOnDestroy()
+    </code></pre>
+
+    <p><strong>Lifecycle Hooks</strong></p>
+
+    <p><strong>1. constructor()</strong></p>
+
+    <ul>
+        <li>Called when the component is created.</li>
+        <li>Used for Dependency Injection.</li>
+        <li>Avoid writing business logic or API calls here.</li>
+    </ul>
+
+    <p><strong>2. ngOnChanges()</strong></p>
+
+    <ul>
+        <li>Called whenever an <strong>@Input()</strong> property changes.</li>
+        <li>Receives the previous and current values.</li>
+    </ul>
+
+    <p><strong>3. ngOnInit()</strong></p>
+
+    <ul>
+        <li>Called once after the component is initialized.</li>
+        <li>Ideal place for API calls and initialization logic.</li>
+    </ul>
+
+    <p><strong>4. ngDoCheck()</strong></p>
+
+    <ul>
+        <li>Called during every change detection cycle.</li>
+        <li>Used for custom change detection.</li>
+    </ul>
+
+    <p><strong>5. ngAfterContentInit()</strong></p>
+
+    <ul>
+        <li>Called once after projected content using <strong>&lt;ng-content&gt;</strong> is initialized.</li>
+    </ul>
+
+    <p><strong>6. ngAfterContentChecked()</strong></p>
+
+    <ul>
+        <li>Called after every check of projected content.</li>
+    </ul>
+
+    <p><strong>7. ngAfterViewInit()</strong></p>
+
+    <ul>
+        <li>Called once after the component's view and child views are initialized.</li>
+        <li>Used with <strong>@ViewChild</strong>.</li>
+    </ul>
+
+    <p><strong>8. ngAfterViewChecked()</strong></p>
+
+    <ul>
+        <li>Called after every change detection of the component's view.</li>
+    </ul>
+
+    <p><strong>9. ngOnDestroy()</strong></p>
+
+    <ul>
+        <li>Called just before the component is destroyed.</li>
+        <li>Used to unsubscribe Observables, clear timers, and release resources.</li>
+    </ul>
+
+    <p><strong>Best Practices</strong></p>
+
+    <ul>
+        <li>Use constructor() only for Dependency Injection.</li>
+        <li>Use ngOnInit() for API calls and initialization.</li>
+        <li>Avoid heavy processing inside ngDoCheck().</li>
+        <li>Always clean up subscriptions in ngOnDestroy().</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an Employee Management application, the component injects services in
+        the constructor, loads employee data in ngOnInit(), updates the UI when
+        @Input values change in ngOnChanges(), accesses child components in
+        ngAfterViewInit(), and unsubscribes from Observables in ngOnDestroy() to
+        prevent memory leaks.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        Angular lifecycle hooks allow developers to execute code at different
+        stages of a component's lifecycle, from creation to destruction. The
+        most commonly used hooks are constructor(), ngOnInit(),
+        ngOnChanges(), and ngOnDestroy().
+    </div>
+    `
+},
+"Provider in Angular?":{
+    "answer":`
+    <p>A provider is an object that tells Angular's Dependency Injection (DI) system how 
+    to create and supply an instance of a service or other dependency whenever it is requested.</p>
+    `
+}
 };

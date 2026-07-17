@@ -475,4 +475,59 @@ public async Task Handle(InventoryRestoreEvent message)
     </div>
     `
 },
+"What is CQRS?": {
+    "answer": `
+    <p>
+        <strong>CQRS (Command Query Responsibility Segregation)</strong> is a
+        design pattern that separates the read and write operations of a system
+        into different models. The main idea is to use one model for updating
+        data (commands) and another model for reading data (queries).
+    </p>
+
+    <p><strong>How It Works:</strong></p>
+
+    <ul>
+        <li><strong>Command Model:</strong> Handles all write operations, such as creating, updating, or deleting data.</li>
+        <li><strong>Query Model:</strong> Handles all read operations, optimized for retrieving data.</li>
+    </ul>
+
+    <p><strong>Architecture:</strong></p>
+
+    <pre><code class="language-text">
+          +-------------------+
+          |   Command Model   |
+          +-------------------+
+          | Create / Update   |
+          | Delete          |
+          +-------------------+
+                  │
+                  ▼
+          +-------------------+
+          |   Query Model     |
+          +-------------------+
+          | Read Operations   |
+          +-------------------+
+    </code></pre>
+
+    <p><strong>Benefits:</strong></p>
+
+    <ul>
+        <li>Improved performance and scalability by optimizing read and write models separately.</li>
+        <li>Clear separation of concerns, making the system easier to maintain.</li>
+        <li>Supports complex business logic in the command model without affecting read performance.</li>
+        <li>Enables event sourcing and eventual consistency.</li>
+    </ul>
+
+    <p><strong>Real-Time Example:</strong></p>
+
+    <p>
+        In an e-commerce application, the Order Service can use a command model to handle order creation and updates, while a separate query model can be used to retrieve order details for display in the user interface. This allows for optimized read performance without impacting the write operations.
+    </p>
+
+    <div class="interview-answer">
+        <strong>Interview One-Liner:</strong>
+        CQRS is a design pattern that separates read and write operations into different models, allowing for optimized performance, scalability, and clear separation of concerns.
+    </div>
+    `
+},
 };

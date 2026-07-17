@@ -1,5 +1,30 @@
 window.data = window.data || {};
 window.data.solid = {
+    "What is Design Pattern?": {
+"answer": `
+<p>Design pattern are time testes solutions for recurring architecture problems.</p>
+Example:
+
+Respository Pattern.<br>
+Factory Pattern<br>
+CQRS<br>
+
+<strong>Types of Design Pattern</strong><br>
+1.Creational - problems and solutions around object creation- Singlton, factory<br>
+2.Behavioral - problems and solutions around communication between object -  Mediator<br>
+3. Structural- Solving concerns around class structure and object composition.<br>
+Adapter- match interfaces of diferent class <br>
+Composite<br>
+Decorator -  add responsibility to object dynamically.<br>
+
+
+
+
+
+`
+
+
+    },
   "What is SRP (Single Responsibility Principle)?": {
     "answer": `
     <p>
@@ -249,6 +274,8 @@ public class PaymentService
   "Liskov Substitution Principle (LSP)": {
     "answer": `
     <p>
+    The Child class should be able to implement all the method of the parent class 
+    seamlessly and smoothly without any issues.<br>
         <strong>Liskov Substitution Principle (LSP)</strong> states that a
         derived (child) class should be able to replace its base (parent)
         class without changing the correctness or behavior of the application.

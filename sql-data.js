@@ -205,9 +205,10 @@ TRUNCATE TABLE Employee;
     "answer": `
     <p>
         A <strong>Common Table Expression (CTE)</strong> is a temporary named
-        result set that exists only for the duration of a single SQL statement.
-        It improves query readability and is commonly used to simplify complex
-        queries, perform recursive operations, and avoid repeating subqueries.
+        result set which can be use in subsequent execution scope only once.
+
+        <p>CTE used to write recursive query.</p>
+        <p>We can perform insert ,select, update , delete operation on CTE.
     </p>
 
     <p><strong>Syntax:</strong></p>
@@ -423,60 +424,36 @@ WHEN NOT MATCHED BY SOURCE THEN
 "How to Improve Stored Procedure Performance in SQL Server": {
     "answer": `
     <p>
-        Improving stored procedure performance involves identifying bottlenecks,
-        optimizing SQL queries, reducing I/O operations, and ensuring efficient
-        execution plans. The first step is always to identify the root cause
-        before making changes.
+       When optimizing stored procedures, I focus on execution plans,
+    indexing strategy, set-based operations, and handling parameter sniffing. 
     </p>
 
     <p><strong>Performance Optimization Techniques:</strong></p>
 
-    <ul>
-        <li>Analyze the Actual Execution Plan.</li>
-        <li>Create appropriate Clustered and Non-Clustered Indexes.</li>
-        <li>Avoid SELECT * and return only required columns.</li>
-        <li>Reduce unnecessary table scans by using indexes.</li>
-        <li>Avoid cursors whenever possible; use set-based operations.</li>
-        <li>Use EXISTS instead of IN for large datasets when appropriate.</li>
-        <li>Use Temp Tables for large intermediate results.</li>
-        <li>Avoid scalar functions in WHERE clauses.</li>
-        <li>Update statistics regularly.</li>
-        <li>Rebuild or reorganize fragmented indexes.</li>
-        <li>Avoid parameter sniffing issues using OPTION(RECOMPILE) or OPTIMIZE FOR when appropriate.</li>
-        <li>Monitor performance using Query Store and SQL Profiler.</li>
-    </ul>
+   <p><strong>Index Usage </strong> </p>
+<p>I always analyze execution plans and ensure proper clustered/non-clustered indexes 
+are in place to reduce table scans.”</p>
 
-    <p><strong>Example:</strong></p>
+<strong>Avoid SELECT *</strong>  
+<p>“I explicitly select only required columns to minimize I/O and improve performance.”</p>
 
-    <pre><code class="language-sql">
--- Bad
-SELECT *
-FROM Employee
-WHERE DepartmentId = 10;
-    </code></pre>
+<p><strong>Set-Based Operations  </strong></p>
+<p>“I replace row-by-row (cursors/loops) with set-based queries, which scale much better.”</p>
 
-    <pre><code class="language-sql">
--- Better
-SELECT EmployeeId,
-       Name,
-       Salary
-FROM Employee
-WHERE DepartmentId = 10;
-    </code></pre>
+<p><strong>Parameter Sniffing  </strong></p>
+<p>“I handle parameter sniffing issues using OPTION(RECOMPILE) or local variables when needed.”</p>
 
-    <p><strong>Real-Time Example:</strong></p>
+<p><strong>Statistics & Maintenance</strong>  </p>
+<p>“I keep statistics updated and rebuild/reorganize indexes to ensure the optimizer has accurate data.”</p>
 
-    <p>
-        A payroll stored procedure was taking 20 seconds because it performed
-        a table scan on a table containing millions of records. After creating
-        a Non-Clustered Index on DepartmentId, removing SELECT *, and updating
-        statistics, execution time reduced to less than one second.
-    </p>
+<p><strong>Temp Tables vs Table Variables </strong></p>
+<p>“I choose wisely between temp tables and table variables depending on row count and indexing needs.”</p>
 
-    <div class="interview-answer">
-        <strong>Interview One-Liner:</strong>
-        To improve stored procedure performance, I first analyze the execution plan, identify bottlenecks, optimize indexes and queries, avoid unnecessary data retrieval, update statistics, and monitor execution using SQL Server tools.
-    </div>
+<p><strong>Transaction Scope  </strong></p>
+<p>“I keep transactions short and precise to reduce locking/blocking.”</p>
+
+<p><strong>Execution Plan Review </strong> </p>
+<p>“I regularly review execution plans to identify bottlenecks like key lookups or hash joins.”</p>
     `
 },
 "ROW_NUMBER() vs RANK() vs DENSE_RANK()": {
@@ -1301,6 +1278,8 @@ END;
         <strong>Temporary Table</strong> are used to store intermediate
         result sets in SQL Server, but they differ in scope, storage,
         performance, and usage.
+        <p>Temperary tables are physical tables which get create for session once the session is
+        closed temperary tables is dropped.</p>
     </p>
 
     <p><strong>Execution Flow</strong></p>
@@ -1500,67 +1479,18 @@ COMMIT;
 "What is a Race Condition?": {
     "answer": `
     <p>
-        A <strong>Race Condition</strong> occurs when two or more threads or
-        processes access and modify the same shared resource simultaneously, and
-        the final result depends on the order in which they execute.
+      A race condition occurs when two or more transactions (or threads) try to read and update the same data simultaneously, and the final result depends on the 
+      order in which those operations execute. This can lead to incorrect or inconsistent data.
     </p>
-
-    <p>
-        Because thread execution order is unpredictable, race conditions can
-        lead to incorrect data, inconsistent application state, and unexpected
-        behavior.
-    </p>
-
-    <p><strong>Race Condition Flow</strong></p>
-
-    <pre><code class="language-text">
-Shared Variable = 100
-
-Thread A              Thread B
-    │                     │
-Read 100             Read 100
-    │                     │
-+10                  -20
-    │                     │
-Write 110           Write 80
-
-Final Value = 80 (Incorrect)
-Expected = 90
-    </code></pre>
-
-    <p><strong>Example</strong></p>
-
-    <pre><code class="language-csharp">
-class Counter
-{
-    public int Count = 0;
-
-    public void Increment()
-    {
-        Count++;
-    }
-}
-    </code></pre>
-
-    <pre><code class="language-csharp">
-Parallel.For(0, 1000, i =>
-{
-    counter.Increment();
-});
-
-Console.WriteLine(counter.Count);
-    </code></pre>
-
-    <p>
-        The expected value is <strong>1000</strong>, but due to multiple threads
-        updating the shared variable simultaneously, the actual value may be less.
-    </p>
-
+    
     <p><strong>How to Prevent Race Conditions</strong></p>
 
     <ul>
-        <li>Use the <strong>lock</strong> statement.</li>
-        <li>Use <strong>Monitor</strong> for explicit synchronization.</li>
+        <li>Use Transactions (Most Common)</li>
+        <li>Use Row Locks- <br>
+        SELECT Balance
+FROM Account WITH (UPDLOCK, ROWLOCK)
+WHERE Id = 1;</li>
         <li>Use the <strong>Interlocked</strong> class for atomic operations.</li>
         <li>Use thread-safe collections such as ConcurrentDictionary.</li>
         <li>Avoid shared mutable state where possible.</li>
@@ -2257,5 +2187,377 @@ select  DepartmentId, Salary from SalaryCTE where SalaryRank = 2
     </p>
     `
 },
+"Pagination in SQL?":{
+    "answer":`
+   <pre><code class="language-sql">
+    <strong>    Method 1: OFFSET-FETCH </strong>
+    DECLARE @PageNumber INT = 3;
+DECLARE @PageSize INT = 10;
 
+SELECT EmployeeId,
+       Name,
+       Salary
+FROM Employee
+ORDER BY EmployeeId
+OFFSET (@PageNumber - 1) * @PageSize ROWS
+FETCH NEXT @PageSize ROWS ONLY;
+
+ <strong>    Method 2: ROW_NUMBER() </strong>
+DECLARE @PageNumber INT = 3;
+DECLARE @PageSize INT = 10;
+
+WITH EmployeeCTE AS
+(
+    SELECT
+        ROW_NUMBER() OVER (ORDER BY EmployeeId) AS RowNum,
+        EmployeeId,
+        Name,
+        Salary
+    FROM Employee
+)
+SELECT *
+FROM EmployeeCTE
+WHERE RowNum BETWEEN
+      ((@PageNumber - 1) * @PageSize + 1)
+      AND
+      (@PageNumber * @PageSize);
+
+ <strong>    Method 3: Keyset(Seek) Pagination  </strong>
+      CREATE PROCEDURE usp_GetEmployees_Keyset
+(
+      @LastEmployeeId INT = NULL,
+      @PageSize INT = 10
+)
+AS
+BEGIN
+
+    SET NOCOUNT ON;
+
+    IF @LastEmployeeId IS NULL
+    BEGIN
+
+        SELECT TOP (@PageSize)
+               EmployeeId,
+               Name,
+               Salary
+        FROM Employee
+        ORDER BY EmployeeId;
+
+    END
+    ELSE
+    BEGIN
+
+        SELECT TOP (@PageSize)
+               EmployeeId,
+               Name,
+               Salary
+        FROM Employee
+        WHERE EmployeeId > @LastEmployeeId
+        ORDER BY EmployeeId;
+
+    END
+
+END
+    </pre></code>
+    `
+},
+"Select employee who earn more than average salary":{
+    "answer":`
+<pre><code class="language-sql">
+SELECT EmployeeId,
+       Name,
+       Salary
+FROM Employee
+WHERE Salary >
+(
+    SELECT AVG(Salary)
+    FROM Employee
+);
+    </pre></code>
+    `
+},
+"What is Isolation Level?":{
+    "answer":`
+<p>Isolation Level defines how one transaction can see the changes made by another
+ transaction while both are running.</p>
+ <strong><p>Why Isolation Level Required?  </strong></p>
+Dirty Read  - T1 Update Data and T2 read data but T1 rollback changes<br>
+Non-Repeatable Read - T1 select data (salary) and T2 update and commit and T1 again read salary it get differenet data <br>
+Phantom Read - T1 select count of table and T2 insert some data and commit , again T1 select count get different <br>
+
+
+<strong><p>Isolation Levels </strong></p>
+1. READ UNCOMMITTED  - SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+<br>
+2. READ COMMITTED (Default)
+<br>
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+Prevents:
+<br>Dirty Read <br>
+3. REPEATABLE READ<br>
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;<br>
+Prevents: <br>
+❌ Dirty Read
+❌ Non-repeatable Read<br>
+Allows
+✅ Phantom Read
+<br>
+4. SERIALIZABLE<br>
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;<br>
+Prevents: 
+❌ Dirty Read
+❌ Non-repeatable Read
+❌ Phantom Read
+    `
+
+},
+"How do you troubleshoot blocking and deadlocks in SQL Server?": {
+    "answer": `
+    <p>
+        <strong>Blocking</strong> occurs when one transaction holds a lock and
+        another transaction has to wait for that lock to be released.
+        <strong>Deadlock</strong> occurs when two or more transactions wait for
+        each other indefinitely, and SQL Server resolves it by selecting one
+        transaction as the deadlock victim.
+    </p>
+
+    <p>
+        When troubleshooting performance issues, I first determine whether the
+        problem is blocking or a deadlock, identify the sessions involved, find
+        the SQL statements causing the issue, and then apply the appropriate fix.
+    </p>
+
+    <p><strong>Troubleshooting Process</strong></p>
+
+    <pre><code class="language-text">
+Performance Issue
+       │
+       ▼
+Check Blocking
+       │
+       ▼
+Identify Blocking Session (SPID)
+       │
+       ▼
+Find SQL Query
+       │
+       ▼
+Analyze Locks & Execution Plan
+       │
+       ▼
+Optimize Query / Add Index
+       │
+       ▼
+If Deadlock
+       │
+       ▼
+Analyze Deadlock Graph
+       │
+       ▼
+Implement Retry Logic &
+Reduce Lock Contention
+    </code></pre>
+
+    <p><strong>Step 1 - Identify Blocking Sessions</strong></p>
+
+    <pre><code class="language-sql">
+EXEC sp_who2;
+    </code></pre>
+
+    <p>
+        Check the <strong>BlkBy</strong> column to identify which session is
+        blocking others.
+    </p>
+
+    <p><strong>Step 2 - Identify Running Queries</strong></p>
+
+    <pre><code class="language-sql">
+SELECT
+    session_id,
+    blocking_session_id,
+    wait_type,
+    wait_time,
+    status,
+    command
+FROM sys.dm_exec_requests
+WHERE blocking_session_id <> 0;
+    </code></pre>
+
+    <p><strong>Step 3 - Find the SQL Statement</strong></p>
+
+    <pre><code class="language-sql">
+DBCC INPUTBUFFER(54);
+    </code></pre>
+
+    <p>
+        Replace <strong>54</strong> with the blocking session ID (SPID).
+    </p>
+
+    <p><strong>Step 4 - Analyze Deadlocks</strong></p>
+
+    <ul>
+        <li>Use SQL Server Extended Events.</li>
+        <li>Capture the Deadlock Graph.</li>
+        <li>Identify the resources and queries involved.</li>
+    </ul>
+
+    <p><strong>How to Resolve Blocking</strong></p>
+
+    <ul>
+        <li>Keep transactions short.</li>
+        <li>Create proper indexes.</li>
+        <li>Avoid long-running transactions.</li>
+        <li>Commit or rollback transactions quickly.</li>
+        <li>Optimize slow queries.</li>
+    </ul>
+
+    <p><strong>How to Prevent Deadlocks</strong></p>
+
+    <ul>
+        <li>Access tables in the same order.</li>
+        <li>Reduce transaction duration.</li>
+        <li>Create appropriate indexes.</li>
+        <li>Use suitable isolation levels.</li>
+        <li>Implement retry logic for SQL Error 1205.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        In an order processing application, users reported that saving orders
+        occasionally hung. Using <strong>sp_who2</strong> and
+        <strong>sys.dm_exec_requests</strong>, we identified a long-running
+        transaction holding locks on the Orders table. After optimizing the
+        query, adding a missing index, and reducing the transaction scope, the
+        blocking issue was resolved. We also implemented retry logic to handle
+        occasional deadlocks.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        To troubleshoot blocking and deadlocks, I first identify the blocking
+        session using DMVs or sp_who2, inspect the running SQL, analyze locks
+        and execution plans, optimize queries and indexes, and for deadlocks,
+        review the deadlock graph and implement retry logic while reducing lock
+        contention.
+    </div>
+    `
+},
+"How do Covering Index, Included Index, and Composite Index improve performance?": {
+    "answer": `
+    <p>
+        <strong>Covering Index</strong>, <strong>Included Index</strong>, and
+        <strong>Composite Index</strong> are indexing techniques used to reduce
+        disk I/O, minimize table lookups, and improve query performance.
+    </p>
+
+    <p><strong>Index Types</strong></p>
+
+    <pre><code class="language-text">
+Indexes
+    │
+    ├── Composite Index
+    ├── Included Index
+    └── Covering Index
+    </code></pre>
+
+    <p><strong>1. Composite Index</strong></p>
+
+    <p>
+        A Composite Index is an index created on <strong>two or more columns</strong>.
+        It is useful when queries frequently filter or sort using multiple columns.
+    </p>
+
+    <pre><code class="language-sql">
+CREATE INDEX IX_Employee_Department_Salary
+ON Employee
+(
+    DepartmentId,
+    Salary
+);
+    </code></pre>
+
+    <p>
+        This index improves queries such as:
+    </p>
+
+    <pre><code class="language-sql">
+SELECT *
+FROM Employee
+WHERE DepartmentId = 10
+AND Salary > 50000;
+    </code></pre>
+
+    <p><strong>2. Included Index</strong></p>
+
+    <p>
+        Included columns are stored only at the leaf level of a nonclustered
+        index. They are not used for searching but allow SQL Server to return
+        additional columns without performing a Key Lookup.
+    </p>
+
+    <pre><code class="language-sql">
+CREATE INDEX IX_Employee_Department
+ON Employee(DepartmentId)
+INCLUDE(Name, Salary);
+    </code></pre>
+
+    <p><strong>3. Covering Index</strong></p>
+
+    <p>
+        A Covering Index contains all the columns required by a query, allowing
+        SQL Server to satisfy the query using only the index without accessing
+        the base table.
+    </p>
+
+    <pre><code class="language-sql">
+CREATE INDEX IX_Employee_Covering
+ON Employee(DepartmentId)
+INCLUDE(Name, Salary);
+    </code></pre>
+
+    <pre><code class="language-sql">
+SELECT Name, Salary
+FROM Employee
+WHERE DepartmentId = 10;
+    </code></pre>
+
+    <p>
+        Since the index contains <strong>DepartmentId</strong>,
+        <strong>Name</strong>, and <strong>Salary</strong>, SQL Server reads
+        only the index and avoids a Key Lookup.
+    </p>
+
+    <p><strong>How They Improve Performance</strong></p>
+
+    <ul>
+        <li>Reduce disk I/O.</li>
+        <li>Reduce Key Lookups.</li>
+        <li>Reduce table scans.</li>
+        <li>Improve filtering and sorting.</li>
+        <li>Improve query execution time.</li>
+    </ul>
+
+    <p><strong>Real-Time Example</strong></p>
+
+    <p>
+        Suppose an Employee table contains 10 million records. A query searches
+        employees by DepartmentId and returns Name and Salary. Without a suitable
+        index, SQL Server performs a table scan. By creating an index on
+        DepartmentId and including Name and Salary, SQL Server performs an
+        Index Seek and returns the required data directly from the index,
+        significantly reducing execution time.
+    </p>
+
+    <p><strong>Interview One-Liner:</strong></p>
+
+    <div class="interview-answer">
+        A Composite Index improves searches on multiple columns, an Included
+        Index stores additional columns to eliminate Key Lookups, and a Covering
+        Index contains all the columns required by a query so SQL Server can
+        retrieve data directly from the index without accessing the base table.
+    </div>
+    `
+},
 };
